@@ -1,142 +1,110 @@
-module.exports = (sequelize, DataTypes) => {
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
   const Problem = sequelize.define('Problem', {
     id: {
       type: DataTypes.UUID,
+      primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
-    },
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-        len: [5, 200]
-      }
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-      validate: {
-        notEmpty: true
-      }
-    },
-    input_format: {
-      type: DataTypes.TEXT,
       allowNull: false
     },
-    output_format: {
+    title: {
+      type: DataTypes.STRING(200), // character varying(200)
+      allowNull: false
+    },
+    description: {
       type: DataTypes.TEXT,
       allowNull: false
     },
     constraints: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: true // YES
     },
-    sample_cases: {
-      type: DataTypes.JSONB,
-      allowNull: false,
-      defaultValue: [],
-      validate: {
-        isValidSampleCases(value) {
-          if (!Array.isArray(value)) {
-            throw new Error('Sample cases must be an array');
-          }
-          value.forEach(testCase => {
-            if (!testCase.input || !testCase.output) {
-              throw new Error('Each sample case must have input and output');
-            }
-          });
-        }
-      }
-    },
-    test_cases: {
-      type: DataTypes.JSONB,
-      allowNull: false,
-      defaultValue: [],
-      validate: {
-        isValidTestCases(value) {
-          if (!Array.isArray(value)) {
-            throw new Error('Test cases must be an array');
-          }
-          if (value.length === 0) {
-            throw new Error('At least one test case is required');
-          }
-          value.forEach(testCase => {
-            if (!testCase.input || !testCase.output) {
-              throw new Error('Each test case must have input and output');
-            }
-          });
-        }
-      }
+    testCases: {
+      type: DataTypes.JSON,
+      allowNull: true, // YES
+      field: 'test_cases'
     },
     difficulty: {
       type: DataTypes.ENUM('easy', 'medium', 'hard'),
-      defaultValue: 'easy',
-      allowNull: false
+      allowNull: false, // NO
+      defaultValue: 'medium'
     },
     tags: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      defaultValue: [],
-      allowNull: true
+      type: DataTypes.ARRAY(DataTypes.STRING), // ARRAY, not JSON!
+      allowNull: true // YES
     },
-    time_limit: {
+    timeLimit: {
       type: DataTypes.INTEGER,
-      defaultValue: 2000, // in milliseconds
-      allowNull: false,
-      validate: {
-        min: 100,
-        max: 10000
-      }
+      allowNull: false, // NO
+      defaultValue: 2000,
+      field: 'time_limit'
     },
-    memory_limit: {
+    memoryLimit: {
       type: DataTypes.INTEGER,
-      defaultValue: 256, // in MB
-      allowNull: false,
-      validate: {
-        min: 64,
-        max: 1024
-      }
+      allowNull: false, // NO
+      defaultValue: 256,
+      field: 'memory_limit'
     },
     points: {
       type: DataTypes.INTEGER,
-      defaultValue: 100,
-      allowNull: false,
-      validate: {
-        min: 10,
-        max: 1000
-      }
+      allowNull: false, // NO
+      defaultValue: 100
     },
-    created_by: {
+    createdBy: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: false, // NO
       references: {
         model: 'users',
         key: 'id'
-      }
+      },
+      field: 'created_by'
     },
-    is_active: {
+    isActive: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true
+      allowNull: false, // NO
+      defaultValue: true,
+      field: 'is_active'
     },
-    allowed_languages: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+    allowedLanguages: {
+      type: DataTypes.ARRAY(DataTypes.STRING), // ARRAY, not JSON!
+      allowNull: false, // NO
       defaultValue: ['javascript', 'python', 'java', 'cpp'],
-      allowNull: false
+      field: 'allowed_languages'
+    },
+    slug: {
+      type: DataTypes.STRING(250), // character varying(250)
+      allowNull: false // NO
+    },
+    category: {
+      type: DataTypes.STRING(50), // character varying(50)
+      allowNull: false // NO
+    },
+    examples: {
+      type: DataTypes.JSON,
+      allowNull: true, // YES
+      defaultValue: []
+    },
+    hints: {
+      type: DataTypes.JSON,
+      allowNull: true, // YES
+      defaultValue: []
+    },
+    solution: {
+      type: DataTypes.TEXT,
+      allowNull: true // YES
+    },
+    solutionApproach: {
+      type: DataTypes.TEXT,
+      allowNull: true, // YES
+      field: 'solution_approach'
     }
   }, {
     tableName: 'problems',
-    indexes: [
-      {
-        fields: ['difficulty']
-      },
-      {
-        fields: ['tags'],
-        using: 'gin'
-      },
-      {
-        fields: ['created_by']
-      }
-    ]
+    underscored: true,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
 
   return Problem;

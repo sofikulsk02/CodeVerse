@@ -7,28 +7,55 @@ const authenticateToken = async (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
-      return res.status(401).json({ message: 'Access token required' });
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Access token required' 
+      });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     const user = await User.findByPk(decoded.userId);
 
-    if (!user || !user.is_active) {
-      return res.status(401).json({ message: 'Invalid token or user inactive' });
+    if (!user || !user.isActive) {  // Fixed: use isActive instead of is_active
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid token or user inactive' 
+      });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    return res.status(403).json({ message: 'Invalid or expired token' });
+    console.error('Authentication error:', error);
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Invalid or expired token' 
+    });
   }
 };
 
 const requireAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Admin access required' });
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Admin access required' 
+    });
   }
   next();
 };
 
-module.exports = { authenticateToken, requireAdmin };
+const requireMentor = (req, res, next) => {
+  if (!['admin', 'mentor'].includes(req.user.role)) {
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Mentor or admin access required' 
+    });
+  }
+  next();
+};
+
+module.exports = { 
+  authenticateToken, 
+  requireAdmin, 
+  requireMentor 
+};

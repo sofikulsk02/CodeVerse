@@ -1,37 +1,79 @@
-import API from './authService';
+import axios from 'axios';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add token to requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export const problemService = {
-  async getAllProblems(page = 1, difficulty = '', category = '') {
-    const params = new URLSearchParams();
-    params.append('page', page);
-    if (difficulty) params.append('difficulty', difficulty);
-    if (category) params.append('category', category);
-    
-    const response = await API.get(`/problems?${params}`);
-    return response.data;
+  async getProblems(filters = {}) {
+    try {
+      const params = new URLSearchParams();
+      if (filters.difficulty) params.append('difficulty', filters.difficulty);
+      if (filters.category) params.append('category', filters.category);
+      if (filters.search) params.append('search', filters.search);
+      
+      const response = await api.get(`/problems?${params}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching problems:', error);
+      // Return mock data if API fails
+      return {
+        problems: [],
+        total: 0,
+        page: 1,
+        totalPages: 0
+      };
+    }
   },
 
-  async getProblemById(id) {
-    const response = await API.get(`/problems/${id}`);
-    return response.data;
+  async getProblem(id) {
+    try {
+      const response = await api.get(`/problems/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching problem:', error);
+      throw error;
+    }
   },
 
   async submitSolution(problemId, code, language) {
-    const response = await API.post(`/problems/${problemId}/submit`, {
-      code,
-      language
-    });
-    return response.data;
+    try {
+      const response = await api.post('/submissions', {
+        problemId,
+        code,
+        language
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error submitting solution:', error);
+      throw error;
+    }
   },
 
   async getSubmissions(problemId = null) {
-    const url = problemId ? `/submissions?problemId=${problemId}` : '/submissions';
-    const response = await API.get(url);
-    return response.data;
-  },
-
-  async getSubmissionStatus(submissionId) {
-    const response = await API.get(`/submissions/${submissionId}`);
-    return response.data;
+    try {
+      const url = problemId ? `/submissions?problemId=${problemId}` : '/submissions';
+      const response = await api.get(url);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching submissions:', error);
+      return [];
+    }
   }
 };
+
+export default problemService;

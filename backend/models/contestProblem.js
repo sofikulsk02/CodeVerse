@@ -1,60 +1,59 @@
-module.exports = (sequelize, DataTypes) => {
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
   const ContestProblem = sequelize.define('ContestProblem', {
     id: {
       type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
     },
-    contest_id: {
+    contestId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: false, // NOT NULL
       references: {
         model: 'contests',
         key: 'id'
-      }
+      },
+      field: 'contest_id'
     },
-    problem_id: {
+    problemId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: false, // NOT NULL
       references: {
         model: 'problems',
         key: 'id'
-      }
+      },
+      field: 'problem_id'
     },
-    order_index: {
+    orderIndex: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 1,
-      validate: {
-        min: 1
-      }
+      defaultValue: 0,
+      field: 'order_index'
     },
     points: {
       type: DataTypes.INTEGER,
-      allowNull: true, // If null, use problem's default points
-      validate: {
-        min: 1
-      }
+      allowNull: false,
+      defaultValue: 100
     },
-    partial_scoring: {
+    partialScoring: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      allowNull: false,
+      defaultValue: true,
+      field: 'partial_scoring'
     },
-    is_bonus: {
+    isBonus: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      allowNull: false,
+      defaultValue: false,
+      field: 'is_bonus'
     }
   }, {
     tableName: 'contest_problems',
-    indexes: [
-      {
-        unique: true,
-        fields: ['contest_id', 'problem_id']
-      },
-      {
-        fields: ['contest_id', 'order_index']
-      }
-    ]
+    underscored: true,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
 
   return ContestProblem;

@@ -1,147 +1,107 @@
-module.exports = (sequelize, DataTypes) => {
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
   const Submission = sequelize.define('Submission', {
     id: {
       type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
     },
-    user_id: {
+    userId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: false, // NOT NULL
       references: {
         model: 'users',
         key: 'id'
-      }
+      },
+      field: 'user_id'
     },
-    problem_id: {
+    problemId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: false, // NOT NULL
       references: {
         model: 'problems',
         key: 'id'
-      }
+      },
+      field: 'problem_id'
     },
-    contest_id: {
+    contestId: {
       type: DataTypes.UUID,
-      allowNull: true,
+      allowNull: true, // YES - nullable
       references: {
         model: 'contests',
         key: 'id'
-      }
+      },
+      field: 'contest_id'
     },
     code: {
       type: DataTypes.TEXT,
-      allowNull: false,
-      validate: {
-        notEmpty: true
-      }
+      allowNull: false
     },
     language: {
-      type: DataTypes.ENUM('javascript', 'python', 'java', 'cpp', 'c'),
+      type: DataTypes.STRING(50),
       allowNull: false
     },
     status: {
-      type: DataTypes.ENUM(
-        'pending', 'running', 'accepted', 'wrong_answer', 
-        'time_limit_exceeded', 'memory_limit_exceeded', 
-        'runtime_error', 'compile_error', 'presentation_error'
-      ),
-      defaultValue: 'pending',
+      type: DataTypes.STRING(50),
       allowNull: false
     },
     score: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false,
-      validate: {
-        min: 0
-      }
+      type: DataTypes.FLOAT,
+      allowNull: true
     },
-    execution_time: {
-      type: DataTypes.INTEGER, // in milliseconds
+    executionTime: {
+      type: DataTypes.INTEGER,
       allowNull: true,
-      validate: {
-        min: 0
-      }
+      field: 'execution_time'
     },
-    memory_used: {
-      type: DataTypes.INTEGER, // in KB
+    memoryUsed: {
+      type: DataTypes.INTEGER,
       allowNull: true,
-      validate: {
-        min: 0
-      }
+      field: 'memory_used'
     },
-    test_cases_passed: {
+    testCasesPassed: {
       type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false,
-      validate: {
-        min: 0
-      }
+      allowNull: true,
+      field: 'test_cases_passed'
     },
-    total_test_cases: {
+    totalTestCases: {
       type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false,
-      validate: {
-        min: 0
-      }
+      allowNull: true,
+      field: 'total_test_cases'
     },
-    error_message: {
+    errorMessage: {
       type: DataTypes.TEXT,
-      allowNull: true
-    },
-    compiler_output: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    test_case_results: {
-      type: DataTypes.JSONB,
       allowNull: true,
-      defaultValue: []
+      field: 'error_message'
     },
-    submitted_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false
+    compilerOutput: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: 'compiler_output'
     },
-    judged_at: {
+    testCaseResults: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      field: 'test_case_results'
+    },
+    submittedAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'submitted_at'
+    },
+    judgedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'judged_at'
     }
   }, {
     tableName: 'submissions',
-    indexes: [
-      {
-        fields: ['user_id']
-      },
-      {
-        fields: ['problem_id']
-      },
-      {
-        fields: ['contest_id']
-      },
-      {
-        fields: ['status']
-      },
-      {
-        fields: ['submitted_at']
-      },
-      {
-        fields: ['user_id', 'problem_id']
-      }
-    ]
+    underscored: true,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
-
-  // Instance methods
-  Submission.prototype.getAccuracy = function() {
-    if (this.total_test_cases === 0) return 0;
-    return Math.round((this.test_cases_passed / this.total_test_cases) * 100);
-  };
-
-  Submission.prototype.isAccepted = function() {
-    return this.status === 'accepted';
-  };
 
   return Submission;
 };

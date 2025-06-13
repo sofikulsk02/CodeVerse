@@ -1,185 +1,248 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Toaster } from 'react-hot-toast';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import LoginForm from '../components/auth/LoginForm';
 import RegisterForm from '../components/auth/RegisterForm';
-import { APP_NAME } from '../constants';
+import { Sparkles, Code2, Trophy, Users } from 'lucide-react';
+import toast from 'react-hot-toast';
+
+// Demo Login Button Component
+const DemoLoginButton = ({ role, color, email }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    console.log(`🔍 Attempting demo login for role: ${role}, email: ${email}`);
+    
+    try {
+      const result = await login(email, 'password123');
+      console.log('🔍 Login result:', result);
+      
+      if (result.success) {
+        toast.success(`🎉 Logged in as ${role}!`);
+        
+        // Navigate based on role
+        setTimeout(() => {
+          switch (role) {
+            case 'admin':
+              navigate('/admin/dashboard');
+              break;
+            case 'mentor':
+              navigate('/dashboard');
+              break;
+            default:
+              navigate('/dashboard');
+          }
+        }, 500);
+      } else {
+        console.error('❌ Login failed:', result.message);
+        toast.error(result.message || 'Demo login failed');
+      }
+    } catch (error) {
+      console.error('❌ Demo login error:', error);
+      toast.error(`Failed to login as ${role}: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <motion.button
+      onClick={handleDemoLogin}
+      disabled={isLoading}
+      className={`px-6 py-2 rounded-lg font-medium transition-all duration-300 ${color} ${
+        isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+      }`}
+      whileHover={{ scale: isLoading ? 1 : 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      {isLoading ? (
+        <div className="flex items-center space-x-2">
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <span>Logging in...</span>
+        </div>
+      ) : (
+        role
+      )}
+    </motion.button>
+  );
+};
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
 
-  const switchToRegister = () => setIsLogin(false);
-  const switchToLogin = () => setIsLogin(true);
+  const features = [
+    {
+      icon: Code2,
+      title: "Solve Problems",
+      description: "Practice with coding challenges"
+    },
+    {
+      icon: Trophy,
+      title: "Join Contests",
+      description: "Compete with other students"
+    },
+    {
+      icon: Users,
+      title: "Learn Together",
+      description: "Collaborate and grow"
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated Background Patterns */}
-      <div className="absolute inset-0">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+      {/* Background Effects */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div 
-          className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-full opacity-30 blur-3xl"
+          className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 blur-3xl"
           animate={{ 
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div 
-          className="absolute -bottom-40 -left-32 w-96 h-96 bg-gradient-to-br from-pink-400 to-rose-600 rounded-full opacity-30 blur-3xl"
-          animate={{ 
-            x: [0, -100, 0],
-            y: [0, 50, 0],
+            x: [0, 50, 0],
+            y: [0, -25, 0],
             scale: [1, 1.1, 1]
           }}
           transition={{ 
-            duration: 10,
+            duration: 12,
             repeat: Infinity,
             ease: "easeInOut"
           }}
         />
         <motion.div 
-          className="absolute top-1/2 left-1/2 w-72 h-72 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full opacity-20 blur-3xl"
+          className="absolute -bottom-40 -left-32 w-96 h-96 bg-gradient-to-br from-pink-400 to-red-600 rounded-full opacity-20 blur-3xl"
           animate={{ 
-            rotate: [0, 360],
-            scale: [1, 1.3, 1]
+            x: [0, -50, 0],
+            y: [0, 25, 0],
+            scale: [1, 1.2, 1]
           }}
           transition={{ 
             duration: 15,
             repeat: Infinity,
-            ease: "linear"
+            ease: "easeInOut"
           }}
         />
       </div>
 
-      {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-          backgroundSize: '40px 40px'
-        }} />
-      </div>
-
-      <div className="relative z-10 w-full max-w-md">
-        {/* Logo Header */}
-        <motion.div 
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+      <div className="relative z-10 w-full max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Side - Branding */}
           <motion.div
-            className="inline-block mb-4"
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            className="text-center lg:text-left"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <div className="w-16 h-16 bg-gradient-to-br from-white to-blue-100 rounded-2xl flex items-center justify-center shadow-2xl">
-              <span className="text-2xl">🚀</span>
-            </div>
+            <motion.div 
+              className="flex items-center justify-center lg:justify-start mb-8"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl flex items-center justify-center mr-4">
+                <Sparkles className="w-7 h-7 text-white" />
+              </div>
+              <h1 className="text-4xl font-bold text-white">CampusCode</h1>
+            </motion.div>
+
+            <motion.h2 
+              className="text-3xl lg:text-4xl font-bold text-white mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              Master Programming with{' '}
+              <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                Interactive Challenges
+              </span>
+            </motion.h2>
+
+            <motion.p 
+              className="text-white/70 text-lg mb-8 max-w-md mx-auto lg:mx-0"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              Join thousands of students improving their coding skills through hands-on practice and friendly competition.
+            </motion.p>
+
+            <motion.div 
+              className="grid gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  className="flex items-center space-x-4 text-left"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + index * 0.1 }}
+                >
+                  <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+                    <feature.icon className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold">{feature.title}</h3>
+                    <p className="text-white/60 text-sm">{feature.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
           </motion.div>
-          <motion.h1 
-            className="text-5xl font-bold bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent mb-2"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-          >
-            {APP_NAME}
-          </motion.h1>
-          <motion.p 
-            className="text-blue-100 text-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            Your Gateway to Competitive Programming
-          </motion.p>
-        </motion.div>
 
-        {/* Tab Switcher */}
-        <motion.div 
-          className="flex bg-white/10 backdrop-blur-md rounded-xl p-1 mb-6 border border-white/20"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <button
-            onClick={switchToLogin}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${
-              isLogin
-                ? 'bg-white text-purple-600 shadow-lg'
-                : 'text-white hover:text-blue-200'
-            }`}
+          {/* Right Side - Auth Form */}
+          <motion.div
+            className="w-full max-w-md mx-auto"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Sign In
-          </button>
-          <button
-            onClick={switchToRegister}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${
-              !isLogin
-                ? 'bg-white text-purple-600 shadow-lg'
-                : 'text-white hover:text-blue-200'
-            }`}
-          >
-            Sign Up
-          </button>
-        </motion.div>
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-white mb-2">
+                {isLogin ? 'Welcome Back!' : 'Join CampusCode'}
+              </h3>
+              <p className="text-white/70">
+                {isLogin ? 'Sign in to continue your journey' : 'Start your coding adventure today'}
+              </p>
+            </div>
 
-        {/* Form Container */}
-        <AnimatePresence mode="wait">
-          {isLogin ? (
-            <motion.div
-              key="login"
-              initial={{ opacity: 0, x: -20, rotateY: -15 }}
-              animate={{ opacity: 1, x: 0, rotateY: 0 }}
-              exit={{ opacity: 0, x: 20, rotateY: 15 }}
-              transition={{ duration: 0.4 }}
+            {/* Demo Login Buttons */}
+            <motion.div 
+              className="mb-6 p-4 bg-white/5 backdrop-blur rounded-xl border border-white/10"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
             >
-              <LoginForm onSwitchToRegister={switchToRegister} />
+              <p className="text-white/80 text-sm text-center mb-3">🚀 Quick Demo Access:</p>
+              <div className="grid grid-cols-3 gap-2">
+                <DemoLoginButton 
+                  role="Admin" 
+                  color="bg-red-600 hover:bg-red-700 text-white"
+                  email="admin@soma.edu"
+                />
+                <DemoLoginButton 
+                  role="mentor" 
+                  email="mentor@soma.edu" 
+                  color="bg-yellow-500 hover:bg-yellow-600 text-white"
+                />
+                <DemoLoginButton 
+                  role="student" 
+                  email="student@soma.edu" 
+                  color="bg-green-500 hover:bg-green-600 text-white"
+                />
+              </div>
+              <p className="text-white/50 text-xs text-center mt-2">
+                All demo accounts use password: <code className="bg-white/10 px-1 rounded">password123</code>
+              </p>
             </motion.div>
-          ) : (
-            <motion.div
-              key="register"
-              initial={{ opacity: 0, x: 20, rotateY: 15 }}
-              animate={{ opacity: 1, x: 0, rotateY: 0 }}
-              exit={{ opacity: 0, x: -20, rotateY: -15 }}
-              transition={{ duration: 0.4 }}
-            >
-              <RegisterForm onSwitchToLogin={switchToLogin} />
-            </motion.div>
-          )}
-        </AnimatePresence>
 
-        {/* Footer */}
-        <motion.div 
-          className="text-center mt-8 text-sm text-blue-200"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          <motion.p
-            className="inline-block"
-            animate={{ 
-              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
-            }}
-            transition={{ 
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            style={{
-              background: 'linear-gradient(270deg, #60a5fa, #a78bfa, #f472b6, #60a5fa)',
-              backgroundSize: '200% 200%',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}
-          >
-            © 2025 {APP_NAME}. Empowering the next generation of coders.
-          </motion.p>
-        </motion.div>
+            {isLogin ? (
+              <LoginForm onSwitchToRegister={() => setIsLogin(false)} />
+            ) : (
+              <RegisterForm onSwitchToLogin={() => setIsLogin(true)} />
+            )}
+          </motion.div>
+        </div>
       </div>
     </div>
   );

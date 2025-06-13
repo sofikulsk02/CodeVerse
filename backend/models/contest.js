@@ -1,135 +1,104 @@
-module.exports = (sequelize, DataTypes) => {
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
   const Contest = sequelize.define('Contest', {
     id: {
       type: DataTypes.UUID,
+      primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+      allowNull: false
     },
     name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-        len: [5, 200]
-      }
+      type: DataTypes.STRING(200),
+      allowNull: false
     },
     description: {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    start_time: {
+    startTime: {
       type: DataTypes.DATE,
       allowNull: false,
-      validate: {
-        isDate: true,
-        isAfter: new Date().toISOString()
-      }
+      field: 'start_time'
     },
-    end_time: {
+    endTime: {
       type: DataTypes.DATE,
       allowNull: false,
-      validate: {
-        isDate: true,
-        isEndTimeValid() {
-          if (this.end_time <= this.start_time) {
-            throw new Error('End time must be after start time');
-          }
-        }
-      }
+      field: 'end_time'
     },
-    created_by: {
+    createdBy: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: 'users',
         key: 'id'
-      }
+      },
+      field: 'created_by'
     },
-    is_active: {
+    isActive: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true
+      allowNull: false,
+      defaultValue: true,
+      field: 'is_active'
     },
-    max_participants: {
+    maxParticipants: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      validate: {
-        min: 1
-      }
+      field: 'max_participants'
     },
-    registration_required: {
+    registrationRequired: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      allowNull: false,
+      defaultValue: false,
+      field: 'registration_required'
     },
-    registration_start: {
+    registrationStart: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'registration_start'
     },
-    registration_end: {
+    registrationEnd: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'registration_end'
     },
     rules: {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    prize_distribution: {
-      type: DataTypes.JSONB,
+    prizeDistribution: {
+      type: DataTypes.JSON,
       allowNull: true,
-      defaultValue: {}
+      field: 'prize_distribution'
     },
-    allowed_batches: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+    allowedBatches: {
+      type: DataTypes.ARRAY(DataTypes.STRING(255)), // ARRAY, not JSON
       allowNull: true,
-      defaultValue: []
+      field: 'allowed_batches'
     },
-    allowed_years: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
+    allowedYears: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER), // ARRAY of integers
       allowNull: true,
-      defaultValue: []
+      field: 'allowed_years'
     },
-    allowed_departments: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+    allowedDepartments: {
+      type: DataTypes.ARRAY(DataTypes.STRING(255)), // ARRAY, not JSON
       allowNull: true,
-      defaultValue: []
+      field: 'allowed_departments'
     },
-    contest_type: {
-      type: DataTypes.ENUM('practice', 'official', 'mock'),
+    contestType: {
+      type: DataTypes.ENUM('practice', 'official', 'mock'), // Exact enum values from database
+      allowNull: false,
       defaultValue: 'official',
-      allowNull: false
+      field: 'contest_type'
     }
   }, {
     tableName: 'contests',
-    indexes: [
-      {
-        fields: ['start_time']
-      },
-      {
-        fields: ['end_time']
-      },
-      {
-        fields: ['created_by']
-      },
-      {
-        fields: ['contest_type']
-      }
-    ]
+    underscored: true,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
-
-  // Instance methods
-  Contest.prototype.getStatus = function() {
-    const now = new Date();
-    if (now < this.start_time) {
-      return 'upcoming';
-    } else if (now >= this.start_time && now <= this.end_time) {
-      return 'ongoing';
-    } else {
-      return 'ended';
-    }
-  };
-
-  Contest.prototype.getDuration = function() {
-    return Math.floor((this.end_time - this.start_time) / (1000 * 60)); // in minutes
-  };
 
   return Contest;
 };

@@ -1,100 +1,108 @@
-const { User } = require('../models');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
-
-const generateToken = (userId) => {
-  return jwt.sign(
-    { userId },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-  );
-};
+const { User } = require('../models');
 
 const register = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { name, email, password, role, batch, year, department, registration_number } = req.body;
-
+    const { name, email, password, role, year, department } = req.body;
+    
+    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists with this email' });
+      return res.status(400).json({ 
+        success: false, 
+        message: 'User already exists' 
+      });
     }
-
+    
+    // Create new user (password will be automatically hashed by beforeCreate hook)
     const user = await User.create({
       name,
       email,
-      password,
+      password, // This will be hashed automatically by the beforeCreate hook
       role: role || 'student',
-      batch,
       year,
-      department,
-      registration_number
+      department
     });
-
-    const token = generateToken(user.id);
-
+    
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '24h' }
+    );
+    
     res.status(201).json({
-      message: 'User registered successfully',
+      success: true,
+      message: 'Registration successful',
       token,
       user: user.toSafeObject()
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
+    });
   }
 };
 
 const login = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { email, password } = req.body;
-
+    console.log('🔐 Login attempt:', { email });
+    
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      console.log('❌ User not found:', email);
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid credentials' 
+      });
     }
-
+    
+    console.log('✅ User found:', { email: user.email, role: user.role });
+    
+    // Use the model's validatePassword method
     const isValidPassword = await user.validatePassword(password);
+    console.log('🔍 Password validation result:', isValidPassword);
+    
     if (!isValidPassword) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      console.log('❌ Invalid password for:', email);
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid credentials' 
+      });
     }
-
-    if (!user.is_active) {
-      return res.status(401).json({ message: 'Account is deactivated' });
-    }
-
-    await user.update({ last_login: new Date() });
-
-    const token = generateToken(user.id);
-
+    
+    console.log('✅ Password valid for:', email);
+    
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '24h' }
+    );
+    
+    await user.update({ 
+      lastLoginAt: new Date(),
+      loginCount: user.loginCount + 1 
+    });
+    
+    console.log('✅ Login successful for:', email, 'Role:', user.role);
+    
     res.json({
+      success: true,
       message: 'Login successful',
       token,
       user: user.toSafeObject()
     });
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
-const getProfile = async (req, res) => {
-  try {
-    res.json({
-      user: req.user.toSafeObject()
+    console.error('❌ Login error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
     });
-  } catch (error) {
-    console.error('Get profile error:', error);
-    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-module.exports = { register, login, getProfile };
+module.exports = { register, login };

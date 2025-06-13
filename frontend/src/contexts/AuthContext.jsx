@@ -1,97 +1,121 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
+
+const API_BASE_URL = 'http://localhost:5000/api';
 
 const AuthContext = createContext();
 
-const initialState = {
-  user: null,
-  token: localStorage.getItem('token'),
-  isLoading: true,
-  isAuthenticated: false,
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
 
-function authReducer(state, action) {
-  switch (action.type) {
-    case 'LOGIN_SUCCESS':
-      return {
-        ...state,
-        user: action.payload.user,
-        token: action.payload.token,
-        isAuthenticated: true,
-        isLoading: false,
-      };
-    case 'LOGOUT':
-      return {
-        ...state,
-        user: null,
-        token: null,
-        isAuthenticated: false,
-        isLoading: false,
-      };
-    case 'SET_LOADING':
-      return {
-        ...state,
-        isLoading: action.payload,
-      };
-    case 'SET_USER':
-      return {
-        ...state,
-        user: action.payload,
-        isAuthenticated: !!action.payload,
-        isLoading: false,
-      };
-    default:
-      return state;
-  }
-}
-
-export function AuthProvider({ children }) {
-  const [state, dispatch] = useReducer(authReducer, initialState);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    checkAuthStatus();
+    checkAuthState();
   }, []);
 
-  const checkAuthStatus = async () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const user = await authService.getProfile();
-        dispatch({ type: 'SET_USER', payload: user });
-      } catch (error) {
-        localStorage.removeItem('token');
-        dispatch({ type: 'LOGOUT' });
-        console.log(error)
+  const checkAuthState = () => {
+    try {
+      // Fixed: Use 'authToken' consistently
+      const token = localStorage.getItem('authToken');
+      const userData = localStorage.getItem('user');
+      
+      if (token && userData) {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
       }
-    } else {
-      dispatch({ type: 'SET_LOADING', payload: false });
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const login = async (email, password) => {
-    const response = await authService.login(email, password);
-    localStorage.setItem('token', response.token);
-    dispatch({ type: 'LOGIN_SUCCESS', payload: response });
-    return response;
+    try {
+      console.log('🔐 AuthContext login attempt:', { email });
+      
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      console.log('🔍 Login response status:', response.status);
+      
+      const data = await response.json();
+      console.log('🔍 Login response data:', data);
+
+      if (data.success && data.user) {
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setUser(data.user);
+        setIsAuthenticated(true);
+        
+        return { success: true, user: data.user };
+      } else {
+        console.error('❌ Login failed:', data.message);
+        return { success: false, message: data.message || 'Login failed' };
+      }
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      return { success: false, message: 'Network error. Please check your connection.' };
+    }
   };
 
   const register = async (userData) => {
-    const response = await authService.register(userData);
-    localStorage.setItem('token', response.token);
-    dispatch({ type: 'LOGIN_SUCCESS', payload: response });
-    return response;
+    try {
+      const response = await authService.register(userData);
+      
+      // Fixed: Use 'authToken' consistently
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      
+      setUser(response.user);
+      setIsAuthenticated(true);
+      
+      return { success: true, user: response.user };
+    } catch (error) {
+      console.error('Registration error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Registration failed' 
+      };
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    dispatch({ type: 'LOGOUT' });
+    // Fixed: Use 'authToken' consistently
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    setUser(null);
+    setIsAuthenticated(false);
   };
 
   const value = {
-    ...state,
+    user,
+    isAuthenticated,
+    isLoading,
     login,
     register,
     logout,
+    // Role helpers
+    isAdmin: user?.role === 'admin',
+    isStudent: user?.role === 'student',
+    isMentor: user?.role === 'mentor'
   };
 
   return (
@@ -99,12 +123,6 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-}
+export default AuthProvider;
