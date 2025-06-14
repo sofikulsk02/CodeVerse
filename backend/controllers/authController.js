@@ -6,7 +6,6 @@ const register = async (req, res) => {
   try {
     const { name, email, password, role, year, department } = req.body;
     
-    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ 
@@ -15,17 +14,16 @@ const register = async (req, res) => {
       });
     }
     
-    // Create new user (password will be automatically hashed by beforeCreate hook)
+    // Create user (password will be hashed by beforeCreate hook)
     const user = await User.create({
       name,
       email,
-      password, // This will be hashed automatically by the beforeCreate hook
+      password, // Plain password - will be hashed automatically
       role: role || 'student',
       year,
       department
     });
     
-    // Generate JWT
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'your-secret-key',
@@ -63,7 +61,7 @@ const login = async (req, res) => {
     
     console.log('✅ User found:', { email: user.email, role: user.role });
     
-    // Use the model's validatePassword method
+    // Use the model's validatePassword method (defined in User model)
     const isValidPassword = await user.validatePassword(password);
     console.log('🔍 Password validation result:', isValidPassword);
     

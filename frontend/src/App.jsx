@@ -9,11 +9,11 @@ import Problems from './pages/Problems';
 import ProblemDetail from './pages/ProblemDetail';
 import Contests from './pages/Contests';
 import Leaderboard from './pages/Leaderboard';
-import AdminDashboard from './pages/admin/AdminDashboard'; // Make sure this path is correct
+import AdminDashboard from './pages/admin/AdminDashboard';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 
 function AppContent() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
     return (
@@ -94,7 +94,7 @@ function AppContent() {
           <Routes>
             <Route 
               path="/auth" 
-              element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />} 
+              element={isAuthenticated ? <Navigate to={getHomeRoute(user?.role)} replace /> : <AuthPage />} 
             />
             <Route 
               path="/dashboard" 
@@ -146,7 +146,7 @@ function AppContent() {
             />
             <Route 
               path="/" 
-              element={<Navigate to={isAuthenticated ? "/dashboard" : "/auth"} replace />} 
+              element={<Navigate to={isAuthenticated ? getHomeRoute(user?.role) : "/auth"} replace />} 
             />
             <Route 
               path="*" 
@@ -157,6 +157,20 @@ function AppContent() {
       </div>
     </div>
   );
+}
+
+// Helper function to get home route based on role
+function getHomeRoute(role) {
+  switch (role) {
+    case 'admin':
+      return '/admin/dashboard';
+    case 'mentor':
+      return '/dashboard';
+    case 'student':
+      return '/dashboard';
+    default:
+      return '/dashboard';
+  }
 }
 
 function App() {

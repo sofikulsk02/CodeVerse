@@ -39,19 +39,22 @@ export default function LoginForm({ onSwitchToRegister }) {
       if (result.success) {
         toast.success(`Welcome back, ${result.user.name}!`);
         
-        // Navigate based on role
+        // Navigate based on role - KEEP CURRENT WORKING LOGIC
         switch (result.user.role) {
           case 'admin':
             navigate('/admin/dashboard');
             break;
           case 'mentor':
-            navigate('/instructor/dashboard');
+            navigate('/mentor/dashboard');
+            break;
+          case 'student':
+            navigate('/student/dashboard');
             break;
           default:
             navigate('/dashboard');
         }
       } else {
-        toast.error(result.error);
+        toast.error(result.error || result.message);
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
@@ -66,8 +69,22 @@ export default function LoginForm({ onSwitchToRegister }) {
     const result = await login(email, 'password123');
     
     if (result.success) {
-      toast.success(`Logged in as ${role}!`);
-      navigate(role === 'admin' ? '/admin/dashboard' : '/dashboard');
+      toast.success(`Logged in as ${result.user.role}!`);
+      
+      // Navigate based on role - KEEP CURRENT WORKING LOGIC
+      switch (result.user.role) {
+        case 'admin':
+          navigate('/admin/dashboard');
+          break;
+        case 'mentor':
+          navigate('/mentor/dashboard');
+          break;
+        case 'student':
+          navigate('/student/dashboard');
+          break;
+        default:
+          navigate('/dashboard');
+      }
     } else {
       toast.error('Demo login failed');
     }

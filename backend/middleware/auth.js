@@ -16,7 +16,7 @@ const authenticateToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     const user = await User.findByPk(decoded.userId);
 
-    if (!user || !user.isActive) {  // Fixed: use isActive instead of is_active
+    if (!user || !user.isActive) {
       return res.status(401).json({ 
         success: false, 
         message: 'Invalid token or user inactive' 
@@ -44,11 +44,11 @@ const requireAdmin = (req, res, next) => {
   next();
 };
 
-const requireMentor = (req, res, next) => {
-  if (!['admin', 'mentor'].includes(req.user.role)) {
+const requireInstructor = (req, res, next) => {
+  if (!['admin', 'instructor'].includes(req.user.role)) {
     return res.status(403).json({ 
       success: false, 
-      message: 'Mentor or admin access required' 
+      message: 'Instructor or admin access required' 
     });
   }
   next();
@@ -57,5 +57,5 @@ const requireMentor = (req, res, next) => {
 module.exports = { 
   authenticateToken, 
   requireAdmin, 
-  requireMentor 
+  requireInstructor 
 };

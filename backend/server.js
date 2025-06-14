@@ -104,7 +104,7 @@ const startServer = async () => {
     console.log('✅ Database tables synchronized!');
     
     // Create demo users
-    await createDemoUsers();
+    //await createDemoUsers();
     
     const server = app.listen(PORT, (err) => {
       if (err) {

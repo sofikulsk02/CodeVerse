@@ -26,11 +26,14 @@ const DemoLoginButton = ({ role, color, email }) => {
         
         // Navigate based on role
         setTimeout(() => {
-          switch (role) {
+          switch (result.user.role) {
             case 'admin':
               navigate('/admin/dashboard');
               break;
             case 'mentor':
+              navigate('/dashboard');
+              break;
+            case 'student':
               navigate('/dashboard');
               break;
             default:
@@ -94,7 +97,7 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-      {/* Background Effects */}
+      {/* Background Effects - Same as your screenshot */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div 
           className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 blur-3xl"
@@ -126,7 +129,7 @@ export default function AuthPage() {
 
       <div className="relative z-10 w-full max-w-6xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Side - Branding */}
+          {/* Left Side - Branding (exactly like your screenshot) */}
           <motion.div
             className="text-center lg:text-left"
             initial={{ opacity: 0, x: -50 }}
@@ -164,6 +167,7 @@ export default function AuthPage() {
               Join thousands of students improving their coding skills through hands-on practice and friendly competition.
             </motion.p>
 
+            {/* Features - exactly like your screenshot */}
             <motion.div 
               className="grid gap-6"
               initial={{ opacity: 0, y: 20 }}
@@ -190,7 +194,7 @@ export default function AuthPage() {
             </motion.div>
           </motion.div>
 
-          {/* Right Side - Auth Form */}
+          {/* Right Side - Auth Form (exactly like your screenshot) */}
           <motion.div
             className="w-full max-w-md mx-auto"
             initial={{ opacity: 0, x: 50 }}
@@ -206,7 +210,7 @@ export default function AuthPage() {
               </p>
             </div>
 
-            {/* Demo Login Buttons */}
+            {/* Demo Login Buttons - exactly like your screenshot */}
             <motion.div 
               className="mb-6 p-4 bg-white/5 backdrop-blur rounded-xl border border-white/10"
               initial={{ opacity: 0, y: 20 }}
@@ -221,12 +225,12 @@ export default function AuthPage() {
                   email="admin@soma.edu"
                 />
                 <DemoLoginButton 
-                  role="mentor" 
+                  role="Mentor" 
                   email="mentor@soma.edu" 
                   color="bg-yellow-500 hover:bg-yellow-600 text-white"
                 />
                 <DemoLoginButton 
-                  role="student" 
+                  role="Student" 
                   email="student@soma.edu" 
                   color="bg-green-500 hover:bg-green-600 text-white"
                 />

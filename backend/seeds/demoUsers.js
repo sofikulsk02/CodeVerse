@@ -1,5 +1,4 @@
 const { User } = require('../models');
-const bcrypt = require('bcryptjs');
 
 const createDemoUsers = async () => {
   try {
@@ -9,9 +8,9 @@ const createDemoUsers = async () => {
       {
         name: 'Admin User',
         email: 'admin@soma.edu',
-        password: await bcrypt.hash('password123', 12),
+        password: 'password123', // ← Plain password - will be hashed by beforeCreate hook
         role: 'admin',
-        isVerified: true,
+        isEmailVerified: true,
         totalPoints: 1500,
         totalSubmissions: 50,
         acceptedSubmissions: 45
@@ -19,9 +18,9 @@ const createDemoUsers = async () => {
       {
         name: 'Mentor User', 
         email: 'mentor@soma.edu',
-        password: await bcrypt.hash('password123', 12),
+        password: 'password123', // ← Plain password - will be hashed by beforeCreate hook
         role: 'mentor',
-        isVerified: true,
+        isEmailVerified: true,
         totalPoints: 2000,
         totalSubmissions: 75,
         acceptedSubmissions: 68
@@ -29,12 +28,12 @@ const createDemoUsers = async () => {
       {
         name: 'sofikul sk',
         email: 'student@soma.edu',
-        password: await bcrypt.hash('password123', 12),
+        password: 'password123', // ← Plain password - will be hashed by beforeCreate hook
         role: 'student',
-        isVerified: true,
-        totalPoints: 850,
+        isEmailVerified: true,
+        totalPoints: 750,
         totalSubmissions: 25,
-        acceptedSubmissions: 20
+        acceptedSubmissions: 18
       }
     ];
 
@@ -43,20 +42,18 @@ const createDemoUsers = async () => {
         where: { email: userData.email },
         defaults: userData
       });
-      
+
       if (created) {
-        console.log(`✅ Created ${userData.role}: ${userData.email}`);
+        console.log(`✅ Created demo user: ${userData.email} (${userData.role})`);
       } else {
-        console.log(`ℹ️  ${userData.role} already exists: ${userData.email}`);
+        console.log(`ℹ️ Demo user already exists: ${userData.email}`);
       }
     }
 
-    console.log('🎉 Demo users ready!');
-    return true;
+    console.log('🎉 Demo users setup complete!');
   } catch (error) {
     console.error('❌ Error creating demo users:', error);
-    return false;
   }
 };
 
-module.exports = { createDemoUsers };
+module.exports = createDemoUsers;
