@@ -21,42 +21,62 @@ export const AuthProvider = ({ children }) => {
     checkAuthState();
   }, []);
 
+  const clearAuthData = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
   const checkAuthState = () => {
     try {
       const token = localStorage.getItem('authToken');
       const userData = localStorage.getItem('user');
       
-      if (token && userData) {
-        // Validate JWT token format (should have 3 parts)
-        const tokenParts = token.split('.');
-        if (tokenParts.length !== 3) {
-          console.log('⚠️ Invalid token format, clearing storage');
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
-          setIsLoading(false);
-          return;
-        }
-        
-        try {
-          const parsedUser = JSON.parse(userData);
-          setUser(parsedUser);
-          setIsAuthenticated(true);
-        } catch (parseError) {
-          console.error('Error parsing user data:', parseError);
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
-        }
+      if (!token || !userData) {
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate JWT token format (should have 3 parts separated by dots)
+      const tokenParts = token.split('.');
+      if (tokenParts.length !== 3) {
+        console.log('⚠️ Invalid token format, clearing storage');
+        clearAuthData();
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate that token contains valid base64 data
+      try {
+        atob(tokenParts[0]); // header
+        atob(tokenParts[1]); // payload
+        // signature part (tokenParts[2]) doesn't need to be valid base64
+      } catch (error) {
+        console.log('⚠️ Token contains invalid base64, clearing storage');
+        clearAuthData();
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+        console.log('✅ Auth state restored:', { email: parsedUser.email, role: parsedUser.role });
+      } catch (parseError) {
+        console.error('Error parsing user data:', parseError);
+        clearAuthData();
       }
     } catch (error) {
       console.error('Error checking auth state:', error);
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
+      clearAuthData();
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ✨ Fixed login method with proper token handling
+  // ✨ Enhanced login method with better error handling
   const login = async (email, password) => {
     try {
       console.log('🔐 AuthContext login attempt:', { email });
@@ -70,17 +90,24 @@ export const AuthProvider = ({ children }) => {
       });
 
       console.log('🔍 Login response status:', response.status);
-      
       const data = await response.json();
       console.log('🔍 Login response data:', data);
 
       if (data.success && data.user && data.token) {
+        // Validate token before storing
+        const tokenParts = data.token.split('.');
+        if (tokenParts.length !== 3) {
+          console.error('❌ Received invalid token format from server');
+          return { success: false, message: 'Invalid token received from server' };
+        }
+
         // Store token and user data consistently
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         setUser(data.user);
         setIsAuthenticated(true);
         
+        console.log('✅ Login successful, token stored');
         return { success: true, user: data.user };
       } else {
         console.error('❌ Login failed:', data.message);
@@ -93,10 +120,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    setUser(null);
-    setIsAuthenticated(false);
+    clearAuthData();
+    console.log('🚪 User logged out');
   };
 
   const value = {
@@ -106,8 +131,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAdmin: user?.role === 'admin',
+    isMentor: user?.role === 'mentor',
     isStudent: user?.role === 'student',
-    isMentor: user?.role === 'mentor'
   };
 
   return (

@@ -13,6 +13,17 @@ const authenticateToken = async (req, res, next) => {
       });
     }
 
+    // Check if token has proper JWT format before verification
+    const tokenParts = token.split('.');
+    if (tokenParts.length !== 3) {
+      console.log('❌ Malformed token received:', token.substring(0, 20) + '...');
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid token format' 
+      });
+    }
+
+    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     const user = await User.findByPk(decoded.userId);
 
@@ -26,10 +37,19 @@ const authenticateToken = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.error('Authentication error:', error);
-    return res.status(403).json({ 
+    console.error('Authentication error:', error.name + ':', error.message);
+    
+    // Provide specific error messages for different JWT errors
+    let message = 'Invalid or expired token';
+    if (error.name === 'JsonWebTokenError') {
+      message = 'Invalid token format';
+    } else if (error.name === 'TokenExpiredError') {
+      message = 'Token has expired';
+    }
+    
+    return res.status(401).json({ 
       success: false, 
-      message: 'Invalid or expired token' 
+      message 
     });
   }
 };

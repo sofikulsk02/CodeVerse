@@ -10,6 +10,9 @@ import ProblemDetail from './pages/ProblemDetail';
 import Contests from './pages/Contests';
 import Leaderboard from './pages/Leaderboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import ProblemManagement from './pages/admin/ProblemManagement';
+import ContestManagement from './pages/admin/ContestManagement';
+import UserManagement from './components/admin/UserManagement';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 
 function AppContent() {
@@ -96,6 +99,8 @@ function AppContent() {
               path="/auth" 
               element={isAuthenticated ? <Navigate to={getHomeRoute(user?.role)} replace /> : <AuthPage />} 
             />
+            
+            {/* Regular User Routes */}
             <Route 
               path="/dashboard" 
               element={
@@ -136,6 +141,8 @@ function AppContent() {
                 </ProtectedRoute>
               } 
             />
+            
+            {/* Admin Routes */}
             <Route 
               path="/admin/dashboard" 
               element={
@@ -144,6 +151,31 @@ function AppContent() {
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/admin/problems" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ProblemManagement />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/contests" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ContestManagement />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/users" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <UserManagement />
+                </ProtectedRoute>
+              } 
+            />
+            
             <Route 
               path="/" 
               element={<Navigate to={isAuthenticated ? getHomeRoute(user?.role) : "/auth"} replace />} 

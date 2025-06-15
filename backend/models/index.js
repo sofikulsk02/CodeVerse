@@ -34,12 +34,12 @@ const db = {
 // User associations
 User.hasMany(Submission, { foreignKey: 'user_id', as: 'submissions' });
 User.hasMany(GrowthTrack, { foreignKey: 'user_id', as: 'growthTracks' });
-User.hasMany(Problem, { foreignKey: 'created_by', as: 'createdProblems' });
+User.hasMany(Problem, { foreignKey: 'created_by', as: 'authoredProblems' }); // Changed alias
 User.hasMany(Contest, { foreignKey: 'created_by', as: 'createdContests' });
 
-// Problem associations
-Problem.hasMany(Submission, { foreignKey: 'problem_id', as: 'submissions' });
-Problem.belongsTo(User, { foreignKey: 'created_by', as: 'creator' });
+// Problem associations - Fix the foreign key mismatch
+Problem.belongsTo(User, { foreignKey: 'created_by', as: 'creator' }); // Changed to match your model
+Problem.hasMany(Submission, { foreignKey: 'problem_id', as: 'submissions' }); // Fixed foreign key
 Problem.belongsToMany(Contest, { 
   through: ContestProblem, 
   foreignKey: 'problem_id',

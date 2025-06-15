@@ -1,23 +1,17 @@
-const { Problem, User, Submission } = require('../models');
+const { Problem, User } = require('../models');
 const { validationResult } = require('express-validator');
 const { Op } = require('sequelize');
 
 const getAllProblems = async (req, res) => {
   try {
-    const { page = 1, limit = 10, difficulty, tags, search } = req.query;
+    console.log('📚 Getting all problems...');
+    const { page = 1, limit = 50, difficulty, category, search } = req.query;
     const offset = (page - 1) * limit;
 
-    const whereClause = { is_active: true };
-
-    if (difficulty) {
-      whereClause.difficulty = difficulty;
-    }
-
-    if (tags) {
-      const tagArray = tags.split(',');
-      whereClause.tags = { [Op.overlap]: tagArray };
-    }
-
+    const whereClause = { is_active: true }; // Use underscore format
+    
+    if (difficulty) whereClause.difficulty = difficulty;
+    if (category) whereClause.category = category;
     if (search) {
       whereClause[Op.or] = [
         { title: { [Op.iLike]: `%${search}%` } },
@@ -29,7 +23,7 @@ const getAllProblems = async (req, res) => {
       where: whereClause,
       limit: parseInt(limit),
       offset: offset,
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']], // Use underscore format
       include: [
         {
           model: User,
@@ -39,100 +33,191 @@ const getAllProblems = async (req, res) => {
       ]
     });
 
+    console.log(`✅ Found ${count} problems`);
+
+    // Transform data to match frontend expectations
+    const transformedProblems = problems.map(problem => ({
+      id: problem.id,
+      title: problem.title,
+      description: problem.description,
+      difficulty: problem.difficulty,
+      category: problem.category,
+      tags: problem.tags || [],
+      status: 'published',
+      timeLimit: problem.timeLimit,
+      memoryLimit: problem.memoryLimit,
+      examples: problem.examples || [],
+      testCases: problem.testCases || [],
+      author: problem.creator?.name || 'Unknown',
+      createdAt: problem.created_at, // Map underscore to camelCase for frontend
+      acceptanceRate: 0,
+      submissions: 0
+    }));
+
     res.json({
-      problems,
-      pagination: {
-        total: count,
-        page: parseInt(page),
-        pages: Math.ceil(count / limit),
-        limit: parseInt(limit)
+      success: true,
+      data: {
+        problems: transformedProblems,
+        pagination: {
+          total: count,
+          page: parseInt(page),
+          pages: Math.ceil(count / limit),
+          limit: parseInt(limit)
+        }
       }
     });
   } catch (error) {
-    console.error('Get problems error:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
-const getProblemById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const problem = await Problem.findOne({
-      where: { id, is_active: true },
-      include: [
-        {
-          model: User,
-          as: 'creator',
-          attributes: ['id', 'name']
-        }
-      ]
+    console.error('❌ Get problems error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Internal server error' 
     });
-
-    if (!problem) {
-      return res.status(404).json({ message: 'Problem not found' });
-    }
-
-    if (req.user.role !== 'admin') {
-      const problemData = problem.toJSON();
-      delete problemData.test_cases;
-      return res.json({ problem: problemData });
-    }
-
-    res.json({ problem });
-  } catch (error) {
-    console.error('Get problem error:', error);
-    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 const createProblem = async (req, res) => {
   try {
+    console.log('🔨 Creating new problem...');
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      console.log('❌ Validation errors:', errors.array());
+      return res.status(400).json({ 
+        success: false,
+        message: 'Validation error',
+        errors: errors.array() 
+      });
     }
 
-    const problemData = {
-      ...req.body,
-      created_by: req.user.id
-    };
+    const {
+      title,
+      description,
+      difficulty,
+      category,
+      tags,
+      timeLimit,
+      memoryLimit,
+      examples,
+      testCases
+    } = req.body;
 
-    const problem = await Problem.create(problemData);
+    console.log('📝 Problem data:', { title, difficulty, category });
+    console.log('👤 User creating:', req.user);
+
+    // Generate slug from title
+    const slug = title.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    const problem = await Problem.create({
+      title,
+      description,
+      difficulty: difficulty || 'easy',
+      category: category || 'array',
+      tags: Array.isArray(tags) ? tags : [],
+      timeLimit: timeLimit || 2000,
+      memoryLimit: memoryLimit || 256,
+      examples: examples || [],
+      testCases: testCases || [],
+      createdBy: req.user.id,
+      slug,
+      points: difficulty === 'easy' ? 100 : difficulty === 'medium' ? 200 : 300,
+      isActive: true
+    });
+
+    console.log('✅ Problem created with ID:', problem.id);
 
     res.status(201).json({
+      success: true,
       message: 'Problem created successfully',
-      problem
+      data: { problem }
     });
   } catch (error) {
-    console.error('Create problem error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Create problem error:', error);
+    console.error('Error details:', error.stack);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to create problem',
+      error: error.message
+    });
   }
 };
 
 const updateProblem = async (req, res) => {
   try {
-    const { id } = req.params;
     const errors = validationResult(req);
-    
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ 
+        success: false,
+        message: 'Validation error',
+        errors: errors.array() 
+      });
     }
 
-    const problem = await Problem.findByPk(id);
+    const { id } = req.params;
+    const {
+      title,
+      description,
+      difficulty,
+      category,
+      tags,
+      timeLimit,
+      memoryLimit,
+      examples,
+      testCases
+    } = req.body;
+
+    console.log('🔨 Updating problem:', id);
+
+    const problem = await Problem.findOne({
+      where: { id, is_active: true } // Use underscore format
+    });
+
     if (!problem) {
-      return res.status(404).json({ message: 'Problem not found' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'Problem not found' 
+      });
     }
 
-    await problem.update(req.body);
+    if (problem.createdBy !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Not authorized to update this problem' 
+      });
+    }
+
+    const slug = title ? title.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '') : problem.slug;
+
+    await problem.update({
+      title,
+      description,
+      difficulty,
+      category,
+      tags: Array.isArray(tags) ? tags : [],
+      timeLimit,
+      memoryLimit,
+      examples,
+      testCases,
+      slug,
+      points: difficulty === 'easy' ? 100 : difficulty === 'medium' ? 200 : 300
+    });
+
+    console.log('✅ Problem updated:', problem.id);
 
     res.json({
+      success: true,
       message: 'Problem updated successfully',
-      problem
+      data: { problem }
     });
   } catch (error) {
-    console.error('Update problem error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Update problem error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to update problem',
+      error: error.message
+    });
   }
 };
 
@@ -140,25 +225,44 @@ const deleteProblem = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const problem = await Problem.findByPk(id);
+    const problem = await Problem.findOne({
+      where: { id, is_active: true } // Use underscore format
+    });
+
     if (!problem) {
-      return res.status(404).json({ message: 'Problem not found' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'Problem not found' 
+      });
     }
 
-    await problem.update({ is_active: false });
+    if (problem.createdBy !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Not authorized to delete this problem' 
+      });
+    }
+
+    // Soft delete
+    await problem.update({ isActive: false });
+
+    console.log('✅ Problem deleted:', problem.id);
 
     res.json({
+      success: true,
       message: 'Problem deleted successfully'
     });
   } catch (error) {
-    console.error('Delete problem error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Delete problem error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to delete problem' 
+    });
   }
 };
 
 module.exports = {
   getAllProblems,
-  getProblemById,
   createProblem,
   updateProblem,
   deleteProblem

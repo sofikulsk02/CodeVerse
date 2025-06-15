@@ -48,23 +48,62 @@ const AdminDashboard = () => {
     { id: 3, name: 'Bob Wilson', email: 'bob@soma.edu', role: 'student', status: 'inactive', joinedAt: '2024-02-01', problemsSolved: 12 },
   ];
 
-  const mockQuestions = [
-    { id: 1, title: 'Two Sum', difficulty: 'Easy', category: 'Arrays', status: 'published', submissions: 150, accuracy: 85 },
-    { id: 2, title: 'Binary Tree Traversal', difficulty: 'Medium', category: 'Trees', status: 'draft', submissions: 89, accuracy: 72 },
-    { id: 3, title: 'Dynamic Programming - Knapsack', difficulty: 'Hard', category: 'DP', status: 'published', submissions: 45, accuracy: 58 },
-  ];
-
-  const mockContests = [
-    { id: 1, title: 'Weekly Programming Challenge', status: 'ongoing', participants: 45, startDate: '2024-06-10', endDate: '2024-06-17' },
-    { id: 2, title: 'Algorithm Speed Run', status: 'upcoming', participants: 23, startDate: '2024-06-20', endDate: '2024-06-20' },
-    { id: 3, title: 'Data Structures Mastery', status: 'completed', participants: 67, startDate: '2024-06-01', endDate: '2024-06-07' },
-  ];
-
   useEffect(() => {
     setUsers(mockUsers);
-    setQuestions(mockQuestions);
-    setContests(mockContests);
+    loadDashboardData();
   }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Load real problems from API
+      const response = await fetch('http://localhost:5000/api/problems', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          // Transform problems to match dashboard question format
+          const transformedQuestions = data.data.problems.map(problem => ({
+            id: problem.id,
+            title: problem.title,
+            difficulty: problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1),
+            category: problem.category,
+            status: problem.status || 'published',
+            submissions: problem.submissions || 0,
+            accuracy: problem.acceptanceRate || 0
+          }));
+          
+          setQuestions(transformedQuestions);
+          console.log('✅ Dashboard questions updated:', transformedQuestions.length);
+        }
+      } else {
+        // Fallback to mock data if API fails
+        console.log('API not available, using mock questions');
+        setQuestions([
+          { id: 1, title: 'Two Sum', difficulty: 'Easy', category: 'Arrays', status: 'published', submissions: 150, accuracy: 85 },
+          { id: 2, title: 'Binary Tree Traversal', difficulty: 'Medium', category: 'Trees', status: 'draft', submissions: 89, accuracy: 72 },
+          { id: 3, title: 'Dynamic Programming - Knapsack', difficulty: 'Hard', category: 'DP', status: 'published', submissions: 45, accuracy: 58 }
+        ]);
+      }
+      
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      // Fallback to mock data
+      setQuestions([
+        { id: 1, title: 'Two Sum', difficulty: 'Easy', category: 'Arrays', status: 'published', submissions: 150, accuracy: 85 },
+        { id: 2, title: 'Binary Tree Traversal', difficulty: 'Medium', category: 'Trees', status: 'draft', submissions: 89, accuracy: 72 },
+        { id: 3, title: 'Dynamic Programming - Knapsack', difficulty: 'Hard', category: 'DP', status: 'published', submissions: 45, accuracy: 58 }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -75,6 +114,23 @@ const AdminDashboard = () => {
   const handleBackToHome = () => {
     navigate('/dashboard');
     toast.success('Returning to main dashboard');
+  };
+
+  // Add these new navigation functions
+  const handleNavigateToQuestions = () => {
+    // Store a flag to refresh when coming back
+    sessionStorage.setItem('shouldRefreshQuestions', 'true');
+    navigate('/admin/problems');
+  };
+
+  const handleNavigateToContests = () => {
+    navigate('/admin/contests');
+    toast.success('Opening Contest Management');
+  };
+
+  const handleNavigateToUsers = () => {
+    navigate('/admin/users');
+    toast.success('Opening User Management');
   };
 
   const handleMakeAdmin = (userId) => {
@@ -96,14 +152,57 @@ const AdminDashboard = () => {
     toast.success('User deleted successfully');
   };
 
-  const handleDeleteQuestion = (questionId) => {
-    setQuestions(questions.filter(q => q.id !== questionId));
-    toast.success('Question deleted successfully');
+  const handleDeleteQuestion = async (questionId) => {
+    if (!window.confirm('Are you sure you want to delete this question?')) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Try to delete from API
+      const response = await fetch(`http://localhost:5000/api/problems/${questionId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          toast.success('Question deleted successfully!');
+          // Refresh the questions list
+          await loadDashboardData();
+          return;
+        }
+      }
+      
+      // Fallback to local state update if API fails
+      setQuestions(prevQuestions => prevQuestions.filter(q => q.id !== questionId));
+      toast.error('API error - deleted locally only');
+      
+    } catch (error) {
+      console.error('Error deleting question:', error);
+      // Fallback to local state update
+      setQuestions(prevQuestions => prevQuestions.filter(q => q.id !== questionId));
+      toast.error('API error - deleted locally only');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteContest = (contestId) => {
     setContests(contests.filter(c => c.id !== contestId));
     toast.success('Contest deleted successfully');
+  };
+
+  const handleResetAuth = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    navigate('/auth');
+    toast.success('Auth data cleared. Please login again.');
   };
 
   const sidebarItems = [
@@ -198,7 +297,7 @@ const AdminDashboard = () => {
           <h3 className="text-lg font-semibold mb-4 text-white">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
             <motion.button 
-              onClick={() => setActiveTab('questions')}
+              onClick={handleNavigateToQuestions}
               className="p-4 bg-gradient-to-r from-blue-500/20 to-blue-600/20 text-white rounded-lg hover:from-blue-500/30 hover:to-blue-600/30 transition-all duration-200 border border-blue-500/30"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -207,7 +306,7 @@ const AdminDashboard = () => {
               <span className="text-sm font-medium">Add Question</span>
             </motion.button>
             <motion.button 
-              onClick={() => setActiveTab('contests')}
+              onClick={handleNavigateToContests}
               className="p-4 bg-gradient-to-r from-purple-500/20 to-purple-600/20 text-white rounded-lg hover:from-purple-500/30 hover:to-purple-600/30 transition-all duration-200 border border-purple-500/30"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -216,7 +315,7 @@ const AdminDashboard = () => {
               <span className="text-sm font-medium">Create Contest</span>
             </motion.button>
             <motion.button 
-              onClick={() => setActiveTab('users')}
+              onClick={handleNavigateToUsers}
               className="p-4 bg-gradient-to-r from-green-500/20 to-green-600/20 text-white rounded-lg hover:from-green-500/30 hover:to-green-600/30 transition-all duration-200 border border-green-500/30"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -250,12 +349,13 @@ const AdminDashboard = () => {
           <p className="text-white/70">Manage users and their roles</p>
         </div>
         <motion.button 
+          onClick={handleNavigateToUsers}
           className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center space-x-2 shadow-lg"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
           <Plus className="w-4 h-4" />
-          <span>Add User</span>
+          <span>Manage Users</span>
         </motion.button>
       </div>
 
@@ -359,6 +459,23 @@ const AdminDashboard = () => {
           </table>
         </div>
       </div>
+
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <p className="text-white/60 text-sm mb-4">Want full user management features?</p>
+        <motion.button
+          onClick={handleNavigateToUsers}
+          className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-300 shadow-lg"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          Go to Full User Management
+        </motion.button>
+      </motion.div>
     </motion.div>
   );
 
@@ -374,6 +491,7 @@ const AdminDashboard = () => {
           <p className="text-white/70">Create and manage coding challenges</p>
         </div>
         <motion.button 
+          onClick={handleNavigateToQuestions}
           className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center space-x-2 shadow-lg"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -419,62 +537,104 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {questions.map((question) => (
-                <motion.tr 
-                  key={question.id} 
-                  className="hover:bg-white/5 transition-colors duration-200"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-white">{question.title}</div>
+              {questions.length > 0 ? (
+                questions.map((question) => (
+                  <motion.tr 
+                    key={question.id} 
+                    className="hover:bg-white/5 transition-colors duration-200"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-white">{question.title}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                        question.difficulty === 'Easy' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                        question.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+                        'bg-red-500/20 text-red-300 border border-red-500/30'
+                      }`}>
+                        {question.difficulty}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                      {question.category}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                        question.status === 'published' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 
+                        question.status === 'draft' ? 'bg-gray-500/20 text-gray-300 border border-gray-500/30' :
+                        'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
+                      }`}>
+                        {question.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                      {question.submissions}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                      {question.accuracy}%
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <button className="text-blue-400 hover:text-blue-300 p-2 hover:bg-blue-500/20 rounded-lg transition-all duration-200" title="View">
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => navigate('/admin/problems')}
+                        className="text-green-400 hover:text-green-300 p-2 hover:bg-green-500/20 rounded-lg transition-all duration-200" 
+                        title="Edit"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteQuestion(question.id)}
+                        className="text-red-400 hover:text-red-300 p-2 hover:bg-red-500/20 rounded-lg transition-all duration-200" 
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </motion.tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="px-6 py-8 text-center text-white/60">
+                    {loading ? (
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Loading questions...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Code className="w-12 h-12 mx-auto mb-3 text-white/40" />
+                        <p className="text-lg font-medium mb-2">No questions yet</p>
+                        <p className="text-sm">Create your first coding challenge to get started</p>
+                      </>
+                    )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                      question.difficulty === 'Easy' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
-                      question.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
-                      'bg-red-500/20 text-red-300 border border-red-500/30'
-                    }`}>
-                      {question.difficulty}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
-                    {question.category}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                      question.status === 'published' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-gray-500/20 text-gray-300 border border-gray-500/30'
-                    }`}>
-                      {question.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
-                    {question.submissions}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
-                    {question.accuracy}%
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button className="text-blue-400 hover:text-blue-300 p-2 hover:bg-blue-500/20 rounded-lg transition-all duration-200" title="View">
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <button className="text-green-400 hover:text-green-300 p-2 hover:bg-green-500/20 rounded-lg transition-all duration-200" title="Edit">
-                      <Edit3 className="w-4 h-4" />
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteQuestion(question.id)}
-                      className="text-red-400 hover:text-red-300 p-2 hover:bg-red-500/20 rounded-lg transition-all duration-200"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </td>
-                </motion.tr>
-              ))}
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
+
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <p className="text-white/60 text-sm mb-4">Want to create questions with full editor features?</p>
+        <motion.button
+          onClick={handleNavigateToQuestions}
+          className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          Go to Full Question Management
+        </motion.button>
+      </motion.div>
     </motion.div>
   );
 
@@ -490,6 +650,7 @@ const AdminDashboard = () => {
           <p className="text-white/70">Create and manage programming contests</p>
         </div>
         <motion.button 
+          onClick={handleNavigateToContests}
           className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center space-x-2 shadow-lg"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -551,6 +712,23 @@ const AdminDashboard = () => {
           </motion.div>
         ))}
       </div>
+
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <p className="text-white/60 text-sm mb-4">Want to create contests with advanced settings?</p>
+        <motion.button
+          onClick={handleNavigateToContests}
+          className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-300 shadow-lg"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          Go to Full Contest Management
+        </motion.button>
+      </motion.div>
     </motion.div>
   );
 
@@ -724,6 +902,15 @@ const AdminDashboard = () => {
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Logout</span>
+                </motion.button>
+                <motion.button
+                  onClick={handleResetAuth}
+                  className="flex items-center space-x-2 px-4 py-2 bg-orange-500/20 rounded-xl text-orange-300 hover:bg-orange-500/30 transition-all duration-300 border border-orange-500/30"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <AlertCircle className="w-4 h-4" />
+                  <span>Reset Auth</span>
                 </motion.button>
               </div>
             </div>
