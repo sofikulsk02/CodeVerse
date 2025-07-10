@@ -5,30 +5,30 @@ const UserManagement = () => {
   const [users, setUsers] = useState([
     {
       id: '1',
-      name: 'John Doe',
-      email: 'john@soma.edu',
+      name: 'sofikul sk',
+      email: 'sofikul563@.edu',
       role: 'student',
       department: 'Computer Science',
       isActive: true,
-      createdAt: '2024-01-15'
+      createdAt: '2022-01-15'
     },
     {
       id: '2',
-      name: 'Jane Smith',
-      email: 'jane@soma.edu',
+      name: 'Ajim sk',
+      email: 'Ajim23@.edu',
       role: 'instructor',
       department: 'Mathematics',
       isActive: true,
-      createdAt: '2024-01-10'
+      createdAt: '2022-01-10'
     },
     {
       id: '3',
-      name: 'Mike Wilson',
-      email: 'mike@soma.edu',
+      name: 'naazmoon',
+      email: 'naazMoon.edu',
       role: 'admin',
       department: 'Administration',
       isActive: false,
-      createdAt: '2024-01-05'
+      createdAt: '2022-01-05'
     }
   ]);
   const [loading, setLoading] = useState(false);

@@ -26,7 +26,7 @@ export default function Leaderboard() {
       const mockLeaderboard = [
         {
           rank: 1,
-          name: 'Alex Chen',
+          name: 'sofikul sk',
           points: 2850,
           problemsSolved: 95,
           accuracy: 92,
@@ -45,7 +45,7 @@ export default function Leaderboard() {
         },
         {
           rank: 3,
-          name: 'Maria Garcia',
+          name: 'Ajim sk',
           points: 2420,
           problemsSolved: 81,
           accuracy: 94,
@@ -54,7 +54,7 @@ export default function Leaderboard() {
         },
         {
           rank: 4,
-          name: 'David Kim',
+          name: 'sandip hazra',
           points: 2180,
           problemsSolved: 73,
           accuracy: 87,
@@ -63,7 +63,7 @@ export default function Leaderboard() {
         },
         {
           rank: 5,
-          name: 'Sarah Wilson',
+          name: 'alamgir sk',
           points: 1950,
           problemsSolved: 67,
           accuracy: 91,
@@ -135,7 +135,7 @@ export default function Leaderboard() {
                 <Trophy className="w-8 h-8 text-yellow-400" />
                 <div>
                   <h1 className="text-xl font-bold text-white">Leaderboard</h1>
-                  <p className="text-white/60 text-sm">Top performers in CampusCode</p>
+                  <p className="text-white/60 text-sm">Top performers in CodeVerse</p>
                 </div>
               </div>
             </div>

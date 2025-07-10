@@ -72,7 +72,7 @@ export default function Dashboard() {
         {
           id: 1,
           type: 'welcome',
-          title: 'Welcome to CampusCode!',
+          title: 'Welcome to Jadavpur Univercity!',
           time: 'Just now',
           icon: '🎉'
         },
@@ -168,7 +168,7 @@ export default function Dashboard() {
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
-                <h1 className="text-xl font-bold text-white">CampusCode</h1>
+                <h1 className="text-xl font-bold text-white">CodeVerse</h1>
               </motion.div>
             </div>
 

@@ -43,9 +43,9 @@ const AdminDashboard = () => {
 
   // Mock data - replace with actual API calls
   const mockUsers = [
-    { id: 1, name: 'John Doe', email: 'john@soma.edu', role: 'student', status: 'active', joinedAt: '2024-01-15', problemsSolved: 25 },
-    { id: 2, name: 'Jane Smith', email: 'jane@soma.edu', role: 'mentor', status: 'active', joinedAt: '2024-01-10', problemsSolved: 45 },
-    { id: 3, name: 'Bob Wilson', email: 'bob@soma.edu', role: 'student', status: 'inactive', joinedAt: '2024-02-01', problemsSolved: 12 },
+    { id: 1, name: 'sofikul sk', email: 'rajibsk563@.edu', role: 'student', status: 'active', joinedAt: '2022-12-15', problemsSolved: 25 },
+    { id: 2, name: 'Ajim sk', email: 'Ajim12@.edu', role: 'mentor', status: 'active', joinedAt: '2022-12-10', problemsSolved: 45 },
+    { id: 3, name: 'Sandip Hazra', email: 'sandipHazra56@.edu', role: 'student', status: 'inactive', joinedAt: '2022-12-01', problemsSolved: 12 },
   ];
 
   useEffect(() => {
@@ -228,7 +228,7 @@ const AdminDashboard = () => {
         className="text-center mb-8"
       >
         <h2 className="text-3xl font-bold text-white mb-2">Admin Control Panel</h2>
-        <p className="text-white/70">Manage your SOMA Campus platform</p>
+        <p className="text-white/70">Manage your Jadavpur Campus platform</p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -267,7 +267,7 @@ const AdminDashboard = () => {
               <CheckCircle className="w-5 h-5 text-green-400" />
               <div>
                 <p className="text-sm font-medium text-white">New user registered</p>
-                <p className="text-xs text-white/60">john.doe@soma.edu joined</p>
+                <p className="text-xs text-white/60">sofikul@.edu joined</p>
               </div>
             </div>
             <div className="flex items-center space-x-3 p-3 bg-blue-500/20 rounded-lg">
