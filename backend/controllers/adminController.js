@@ -4,20 +4,20 @@ const { Op } = require('sequelize');
 const { validationResult } = require('express-validator');
 
 class AdminController {
-  // Dashboard Analytics
+  // dashboard Analytics  (shuru 1)
   async getDashboardStats(req, res) {
     try {
       const today = new Date();
       const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-      // User Statistics - use isActive instead of is_active
+      
       const totalUsers = await User.count();
       const activeUsers = await User.count({ where: { isActive: true } });
       const newUsersThisWeek = await User.count({
         where: { createdAt: { [Op.gte]: lastWeek } }
       });
 
-      // Submission Statistics
+      // submission Statistics
       const totalSubmissions = await Submission.count();
       const submissionsToday = await Submission.count({
         where: { 
@@ -30,13 +30,13 @@ class AdminController {
         where: { createdAt: { [Op.gte]: lastWeek } }
       });
 
-      // Problem Statistics
+      // problemss Statistics
       const totalProblems = await Problem.count({ where: { isActive: true } });
       const pendingProblems = await Problem.count({ 
         where: { approvalStatus: 'pending' } 
       });
 
-      // Contest Statistics
+      // contest statistics
       const activeContests = await Contest.count({
         where: {
           startTime: { [Op.lte]: today },
@@ -51,7 +51,7 @@ class AdminController {
         }
       });
 
-      // Recent Activity
+      // recent activity
       const recentSubmissions = await Submission.findAll({
         include: [
           { model: User, attributes: ['name'] },
@@ -88,7 +88,7 @@ class AdminController {
     }
   }
 
-  // User Management
+  // user management
   async getAllUsers(req, res) {
     try {
       const {
@@ -104,7 +104,7 @@ class AdminController {
       const offset = (page - 1) * limit;
       const whereClause = {};
 
-      // Apply filters - use camelCase for Sequelize queries
+  
       if (role) whereClause.role = role;
       if (isActive !== undefined) whereClause.isActive = isActive === 'true';
       if (search) {
@@ -156,7 +156,7 @@ class AdminController {
 
       const { name, email, password, role, ...userData } = req.body;
 
-      // Check if user already exists
+      // check if user already
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
         return res.status(400).json({
@@ -165,10 +165,10 @@ class AdminController {
         });
       }
 
-      // Hash password
+      // hash password 
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      // Create user
+      // create user
       const user = await User.create({
         name,
         email,
@@ -177,7 +177,7 @@ class AdminController {
         ...userData
       });
 
-      // Log action
+      // log action
       await this.logAction(req.user.id, 'CREATE_USER', 'user', user.id, {
         createdUser: { name, email, role }
       });
@@ -209,17 +209,17 @@ class AdminController {
         });
       }
 
-      // Store old values for audit log
+      
       const oldValues = { ...user.dataValues };
 
-      // Hash password if provided
+    
       if (updateData.password) {
         updateData.password = await bcrypt.hash(updateData.password, 12);
       }
 
       await user.update(updateData);
 
-      // Log action
+      // log ACtions
       await this.logAction(req.user.id, 'UPDATE_USER', 'user', user.id, {
         oldValues,
         newValues: updateData
@@ -252,7 +252,7 @@ class AdminController {
       }
 
       // Soft delete - deactivate instead of actual deletion
-      await user.update({ isActive: false }); // Use camelCase
+      await user.update({ isActive: false }); 
 
       // Log action
       await this.logAction(req.user.id, 'DELETE_USER', 'user', user.id, {
@@ -306,7 +306,7 @@ class AdminController {
     }
   }
 
-  // Batch Management
+  // batch Management (sab batches)
   async createBatch(req, res) {
     try {
       const batchData = req.body;
@@ -355,7 +355,7 @@ class AdminController {
     }
   }
 
-  // Resource Management
+  // resource management
   async createResource(req, res) {
     try {
       const resourceData = {
@@ -383,13 +383,13 @@ class AdminController {
     }
   }
 
-  // Analytics and Reports
+  // analytics and reports
   async getUserAnalytics(req, res) {
     try {
       const { userId } = req.params;
       const { startDate, endDate } = req.query;
 
-      // User-specific analytics
+      // user-specific analytics
       const user = await User.findByPk(userId, {
         include: [
           {
@@ -411,7 +411,7 @@ class AdminController {
         });
       }
 
-      // Calculate analytics
+      // calculate analytics
       const analytics = await this.calculateUserAnalytics(user, startDate, endDate);
 
       res.json({
@@ -450,7 +450,7 @@ class AdminController {
       }
 
       if (format === 'csv') {
-        // Generate CSV
+        // generate CSV
         const csv = await this.generateCSV(reportData);
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', `attachment; filename="${type}-report.csv"`);
@@ -470,7 +470,7 @@ class AdminController {
     }
   }
 
-  // Communication Management
+  // ommunication management
   async createAnnouncement(req, res) {
     try {
       const announcementData = {
@@ -530,10 +530,9 @@ class AdminController {
     }
   }
 
-  // System Settings
+  // system Settingse
   async getSystemSettings(req, res) {
     try {
-      // Return current system settings
       const settings = {
         platform: {
           name: 'CampusCode',
@@ -565,7 +564,7 @@ class AdminController {
     }
   }
 
-  // Audit Logs
+  // audit logs
   async getAuditLogs(req, res) {
     try {
       const {
@@ -625,7 +624,7 @@ class AdminController {
     }
   }
 
-  // Helper Methods
+  // helper methods
   async logAction(userId, action, entityType, entityId, details) {
     try {
       await AuditLog.create({
@@ -643,7 +642,7 @@ class AdminController {
   }
 
   async calculateUserAnalytics(user, startDate, endDate) {
-    // Implementation for detailed user analytics calculation
+    // implementation for detailed user analytic calculations
     return {
       totalSubmissions: user.Submissions?.length || 0,
       successRate: 0,
@@ -653,32 +652,26 @@ class AdminController {
   }
 
   async generateUserProgressReport(startDate, endDate, filters) {
-    // Implementation for user progress report generation
     return [];
   }
 
   async generateSubmissionReport(startDate, endDate, filters) {
-    // Implementation for submission analytics report
     return [];
   }
 
   async generateContestReport(startDate, endDate, filters) {
-    // Implementation for contest performance report
     return [];
   }
 
   async generateCSV(data) {
-    // Implementation for CSV generation
     return 'CSV data here';
   }
 
   getClientIP() {
-    // Get client IP from request
     return '127.0.0.1';
   }
 
   getUserAgent() {
-    // Get user agent from request
     return 'Admin Panel';
   }
 }

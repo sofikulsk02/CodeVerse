@@ -21,7 +21,7 @@ const Profile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle profile update
+    // hhandle profile update
     setIsEditing(false);
   };
 

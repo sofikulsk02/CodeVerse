@@ -95,10 +95,10 @@ string solution(string input) {
       const result = await problemService.submitSolution(id, code, language);
       toast.success('Solution submitted successfully!');
       
-      // Add submission to list
+
       setSubmissions(prev => [result.submission, ...prev]);
       
-      // Optionally navigate to submissions or show result
+    
       if (result.submission.status === 'Accepted') {
         toast.success('🎉 Congratulations! Your solution is correct!');
       }
@@ -158,7 +158,6 @@ string solution(string input) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Background Effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div 
           className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 blur-3xl"
@@ -213,7 +212,6 @@ string solution(string input) {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Problem Description */}
             <motion.div 
               className="space-y-6"
               initial={{ opacity: 0, x: -20 }}
@@ -232,8 +230,6 @@ string solution(string input) {
                   </div>
                 </div>
               </div>
-
-              {/* Examples */}
               {problem.examples && problem.examples.length > 0 && (
                 <div className="card">
                   <div className="card-header">
@@ -267,8 +263,6 @@ string solution(string input) {
                   </div>
                 </div>
               )}
-
-              {/* Recent Submissions */}
               <div className="card">
                 <div className="card-header">
                   <h3 className="text-lg font-semibold">Your Submissions</h3>
@@ -301,8 +295,6 @@ string solution(string input) {
                 </div>
               </div>
             </motion.div>
-
-            {/* Code Editor */}
             <motion.div 
               className="space-y-6"
               initial={{ opacity: 0, x: 20 }}

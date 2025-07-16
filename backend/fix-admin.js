@@ -4,15 +4,15 @@ async function fixAdmin() {
   try {
     console.log('🔄 Starting admin user fix...');
     
-    // Delete existing admin
+    // delete existing admin
     await User.destroy({ where: { email: 'admin@soma.edu' } });
     console.log('🗑️ Deleted existing admin user');
 
-    // Create admin with plain password (beforeCreate hook will hash it automatically)
+    // create admin with plain passwor
     const admin = await User.create({
       name: 'System Administrator',
       email: 'admin@soma.edu',
-      password: 'password123', // Plain password - will be hashed by beforeCreate hook
+      password: 'password123',
       role: 'admin',
       department: 'Administration',
       isActive: true,
@@ -24,7 +24,7 @@ async function fixAdmin() {
     console.log('🔑 Password: password123');
     console.log('👑 Role:', admin.role);
     
-    // Test password validation using the model method
+    // test password validation using the model method
     const testValidation = await admin.validatePassword('password123');
     console.log('🧪 Password validation test:', testValidation);
     

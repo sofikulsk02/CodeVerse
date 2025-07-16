@@ -100,7 +100,6 @@ function AppContent() {
               element={isAuthenticated ? <Navigate to={getHomeRoute(user?.role)} replace /> : <AuthPage />} 
             />
             
-            {/* Regular User Routes */}
             <Route 
               path="/dashboard" 
               element={
@@ -141,8 +140,6 @@ function AppContent() {
                 </ProtectedRoute>
               } 
             />
-            
-            {/* Admin Routes */}
             <Route 
               path="/admin/dashboard" 
               element={
@@ -191,7 +188,6 @@ function AppContent() {
   );
 }
 
-// Helper function to get home route based on role
 function getHomeRoute(role) {
   switch (role) {
     case 'admin':

@@ -7,7 +7,6 @@ const executeCode = async (code, language, testCases) => {
   const tempDir = path.join(__dirname, '../temp');
   
   try {
-    // Ensure temp directory exists
     await fs.mkdir(tempDir, { recursive: true });
 
     let fileName, executeCommand;
@@ -24,7 +23,7 @@ const executeCode = async (code, language, testCases) => {
         break;
       case 'java':
         fileName = `${filePath}.java`;
-        // Extract class name from code
+  
         const classMatch = code.match(/public\s+class\s+(\w+)/);
         const className = classMatch ? classMatch[1] : 'Main';
         executeCommand = `javac ${fileName} && java -cp ${tempDir} ${className}`;
@@ -38,7 +37,6 @@ const executeCode = async (code, language, testCases) => {
         throw new Error('Unsupported language');
     }
 
-    // Write code to file
     await fs.writeFile(fileName, code);
 
     const results = [];
@@ -77,14 +75,13 @@ const executeCode = async (code, language, testCases) => {
       }
     }
 
-    // Cleanup
     await cleanup(filePath, language);
 
     return {
       status: allPassed ? 'accepted' : 'wrong_answer',
       results,
       executionTime: Math.max(...results.map(r => r.executionTime || 0)),
-      memoryUsed: 0 // Simplified for now
+      memoryUsed: 0 
     };
 
   } catch (error) {
@@ -124,7 +121,7 @@ const cleanup = async (filePath, language) => {
       try {
         await fs.unlink(filePath + ext);
       } catch (e) {
-        // File might not exist, ignore
+        // file might not exist, ignore
       }
     }
   } catch (error) {

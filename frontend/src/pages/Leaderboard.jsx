@@ -21,8 +21,6 @@ export default function Leaderboard() {
   const loadLeaderboard = async () => {
     try {
       setLoading(true);
-      
-      // Mock leaderboard data
       const mockLeaderboard = [
         {
           rank: 1,
@@ -183,7 +181,7 @@ export default function Leaderboard() {
           </div>
         </motion.div>
 
-        {/* Top 3 Podium */}
+        {/* top 3 podium */}
         <motion.div
           className="grid grid-cols-3 gap-4 mb-8"
           initial={{ opacity: 0, y: 20 }}
@@ -238,7 +236,7 @@ export default function Leaderboard() {
           })}
         </motion.div>
 
-        {/* Rest of Leaderboard */}
+        {/* rest of leaderboard */}
         <motion.div
           className="space-y-3"
           initial={{ opacity: 0, y: 20 }}

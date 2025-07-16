@@ -37,7 +37,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
   if (requiredRole && user?.role !== requiredRole) {
     console.log('🚫 Insufficient permissions:', { userRole: user?.role, requiredRole });
     
-    // Redirect based on user's actual role
+    // redirect based on user's actual role
     const redirectPath = user?.role === 'admin' ? '/admin/dashboard' : '/dashboard';
     return <Navigate to={redirectPath} replace />;
   }

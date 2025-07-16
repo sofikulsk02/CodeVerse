@@ -76,7 +76,6 @@ export default function Problems() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Background Effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div 
           className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 blur-3xl"
@@ -107,7 +106,6 @@ export default function Problems() {
       </div>
 
       <div className="relative z-10">
-        {/* Header */}
         <div className="bg-white/10 backdrop-blur-md border-b border-white/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
@@ -142,7 +140,6 @@ export default function Problems() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Filters */}
           <motion.div 
             className="card mb-8"
             initial={{ opacity: 0, y: 20 }}
@@ -151,7 +148,6 @@ export default function Problems() {
           >
             <div className="card-content">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Search */}
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
@@ -162,8 +158,6 @@ export default function Problems() {
                     className="input pl-10"
                   />
                 </div>
-
-                {/* Difficulty Filter */}
                 <div className="relative">
                   <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <select
@@ -177,8 +171,6 @@ export default function Problems() {
                     <option value="Hard">Hard</option>
                   </select>
                 </div>
-
-                {/* Category Filter */}
                 <div className="relative">
                   <Target className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <select
@@ -195,7 +187,6 @@ export default function Problems() {
                   </select>
                 </div>
 
-                {/* Stats */}
                 <div className="flex items-center space-x-4 text-sm text-gray-600">
                   <span className="flex items-center">
                     <TrendingUp className="w-4 h-4 mr-1" />
@@ -205,8 +196,6 @@ export default function Problems() {
               </div>
             </div>
           </motion.div>
-
-          {/* Problems Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredProblems.length > 0 ? (
               filteredProblems.map((problem, index) => (

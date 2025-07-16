@@ -18,18 +18,21 @@
 ## ✨ Features
 
 ### 🎨 **Beautiful User Interface**
+
 - **Glass-morphism Design** with stunning gradient backgrounds
 - **Smooth Animations** powered by Framer Motion
 - **Responsive Design** that works on all devices
 - **Dark Theme** with elegant color schemes
 
 ### 🔐 **Authentication System**
+
 - **JWT-based Authentication** with secure token management
 - **Login & Registration** with form validation
 - **Protected Routes** for secure access
 - **User Profile Management** with avatars
 
 ### 💻 **Problem Solving Platform**
+
 - **Problems Library** with filtering and search
 - **Multi-language Support** (JavaScript, Python, Java, C++)
 - **Code Editor** with syntax highlighting
@@ -37,6 +40,7 @@
 - **Solution History** and performance metrics
 
 ### 📊 **Advanced Features**
+
 - **Problem Categories** (Array, String, DP, Graph, etc.)
 - **Difficulty Levels** (Easy, Medium, Hard)
 - **Submission Analytics** with runtime and memory stats
@@ -45,6 +49,7 @@
 ## 🛠️ Tech Stack
 
 ### **Frontend**
+
 - **React 18** - Modern React with hooks
 - **Vite** - Lightning-fast build tool
 - **Tailwind CSS v4** - Utility-first CSS framework
@@ -53,10 +58,12 @@
 - **Lucide React** - Beautiful icon library
 
 ### **State Management**
+
 - **React Context** - Built-in state management
 - **Local Storage** - Persistent authentication
 
 ### **Development Tools**
+
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
 - **PostCSS** - CSS processing
@@ -64,23 +71,27 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Node.js 18+** 
+
+- **Node.js 18+**
 - **npm** or **yarn**
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
-   git clone https://github.com/YOUR_USERNAME/soma-campus.git
+   git clone https://github.com/sofikulsk02/soma-campus.git
    cd soma-campus/frontend
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Start development server**
+
    ```bash
    npm run dev
    ```
@@ -115,22 +126,26 @@ frontend/
 ## 🎮 Usage
 
 ### **1. Authentication**
+
 - Register a new account or login
 - Secure JWT token-based authentication
 - Automatic redirect to dashboard
 
 ### **2. Browse Problems**
+
 - Filter by difficulty (Easy/Medium/Hard)
 - Search by title or description
 - Filter by category (Array, String, etc.)
 
 ### **3. Solve Problems**
+
 - Select any problem to view details
 - Choose programming language
 - Write solution in the code editor
 - Submit and get instant feedback
 
 ### **4. Track Progress**
+
 - View submission history
 - Monitor success rates
 - Track solving streaks
@@ -140,12 +155,15 @@ frontend/
 <div align="center">
 
 ### 🔐 Authentication Page
+
 ![Auth Page](https://via.placeholder.com/800x500/6366f1/ffffff?text=Beautiful+Auth+Page)
 
 ### 📊 Dashboard
+
 ![Dashboard](https://via.placeholder.com/800x500/8b5cf6/ffffff?text=Modern+Dashboard)
 
 ### 💻 Problem Solving
+
 ![Problem Detail](https://via.placeholder.com/800x500/06b6d4/ffffff?text=Code+Editor)
 
 </div>
@@ -153,18 +171,21 @@ frontend/
 ## 🚧 Roadmap
 
 ### **Phase 1: Core Platform** ✅
+
 - [x] Authentication system
 - [x] Problem browsing and solving
 - [x] Code submission system
 - [x] Beautiful UI/UX
 
 ### **Phase 2: Enhanced Features** 🔄
+
 - [ ] Real backend integration
 - [ ] Contest system
 - [ ] Leaderboards
 - [ ] Admin panel
 
 ### **Phase 3: Advanced Features** 📋
+
 - [ ] Real-time code execution
 - [ ] Advanced analytics
 - [ ] Team competitions
@@ -187,7 +208,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ## 🙏 Acknowledgments
 
 - **Tailwind CSS** for the amazing utility classes
-- **Framer Motion** for smooth animations  
+- **Framer Motion** for smooth animations
 - **Lucide** for beautiful icons
 - **React** team for the incredible framework
 

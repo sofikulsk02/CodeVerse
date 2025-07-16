@@ -8,13 +8,10 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
-// ✨ Fixed token interceptor with better error handling
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
     if (token) {
-      // Validate token format before sending
       const tokenParts = token.split('.');
       if (tokenParts.length === 3) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -30,17 +27,12 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-// Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear invalid tokens
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-      
-      // Only redirect if not already on auth page
       if (!window.location.pathname.includes('/auth')) {
         window.location.href = '/auth';
       }

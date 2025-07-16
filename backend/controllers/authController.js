@@ -14,11 +14,10 @@ const register = async (req, res) => {
       });
     }
     
-    // Create user (password will be hashed by beforeCreate hook)
     const user = await User.create({
       name,
       email,
-      password, // Plain password - will be hashed automatically
+      password,
       role: role || 'student',
       year,
       department
@@ -52,7 +51,7 @@ const login = async (req, res) => {
     
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      console.log('❌ User not found:', email);
+      console.log('User not found:', email);
       return res.status(401).json({ 
         success: false, 
         message: 'Invalid credentials' 

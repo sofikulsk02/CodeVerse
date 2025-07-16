@@ -60,7 +60,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-800 via-purple-700 to-blue-800 flex">
-      {/* Left Side - Marketing Content */}
+      {/*  */}
       <div className="hidden lg:flex lg:flex-1 flex-col justify-center px-12 text-white">
         <div className="mb-8">
           <div className="flex items-center mb-6">
@@ -133,7 +133,7 @@ const Login = () => {
               <p className="text-gray-600">Sign in to continue your journey</p>
             </div>
 
-            {/* Quick Demo Access */}
+            {/*  */}
             <div className="mb-6 p-4 bg-purple-50 rounded-xl">
               <h3 className="text-sm font-medium text-purple-900 mb-3 flex items-center">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -175,7 +175,7 @@ const Login = () => {
               </div>
             )}
 
-            {/* Login Form */}
+            {/* login Form */}
             <form onSubmit={onSubmit} className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -192,7 +192,6 @@ const Login = () => {
                   placeholder="student@soma.edu"
                 />
               </div>
-
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                   Password
@@ -234,8 +233,6 @@ const Login = () => {
                 )}
               </button>
             </form>
-
-            {/* Quick Demo Login at Bottom */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600 mb-3">Quick Demo Login:</p>
               <div className="flex justify-center space-x-2">

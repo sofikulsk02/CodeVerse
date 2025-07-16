@@ -72,22 +72,22 @@ module.exports = (sequelize) => {
       field: 'prize_distribution'
     },
     allowedBatches: {
-      type: DataTypes.ARRAY(DataTypes.STRING(255)), // ARRAY, not JSON
+      type: DataTypes.ARRAY(DataTypes.STRING(255)), 
       allowNull: true,
       field: 'allowed_batches'
     },
     allowedYears: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER), // ARRAY of integers
+      type: DataTypes.ARRAY(DataTypes.INTEGER), 
       allowNull: true,
       field: 'allowed_years'
     },
     allowedDepartments: {
-      type: DataTypes.ARRAY(DataTypes.STRING(255)), // ARRAY, not JSON
+      type: DataTypes.ARRAY(DataTypes.STRING(255)), 
       allowNull: true,
       field: 'allowed_departments'
     },
     contestType: {
-      type: DataTypes.ENUM('practice', 'official', 'mock'), // Exact enum values from database
+      type: DataTypes.ENUM('practice', 'official', 'mock'),
       allowNull: false,
       defaultValue: 'official',
       field: 'contest_type'

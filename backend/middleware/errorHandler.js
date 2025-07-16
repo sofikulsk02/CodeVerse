@@ -1,7 +1,7 @@
 const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
 
-  // Sequelize validation errors
+  // sequelize validation errors
   if (err.name === 'SequelizeValidationError') {
     const errors = err.errors.map(error => ({
       field: error.path,
@@ -13,7 +13,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Sequelize unique constraint errors
+  // sequelize unique constraint erro
   if (err.name === 'SequelizeUniqueConstraintError') {
     const field = err.errors[0]?.path || 'field';
     return res.status(400).json({
@@ -21,7 +21,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // JWT errors
+  // jwt error
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
       message: 'Invalid token'
@@ -34,7 +34,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Default error
+  //error/
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal server error';
 

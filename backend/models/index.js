@@ -11,7 +11,7 @@ if (dbConfig.use_env_variable) {
   sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, dbConfig);
 }
 
-// Import models
+// import models
 const User = require('./User')(sequelize, Sequelize.DataTypes);
 const Problem = require('./Problem')(sequelize, Sequelize.DataTypes);
 const Contest = require('./Contest')(sequelize, Sequelize.DataTypes);
@@ -19,7 +19,7 @@ const ContestProblem = require('./ContestProblem')(sequelize, Sequelize.DataType
 const Submission = require('./Submission')(sequelize, Sequelize.DataTypes);
 const GrowthTrack = require('./GrowthTrack')(sequelize, Sequelize.DataTypes);
 
-// Define associations
+// efine associations
 const db = {
   User,
   Problem,
@@ -31,15 +31,14 @@ const db = {
   Sequelize
 };
 
-// User associations
+
 User.hasMany(Submission, { foreignKey: 'user_id', as: 'submissions' });
 User.hasMany(GrowthTrack, { foreignKey: 'user_id', as: 'growthTracks' });
-User.hasMany(Problem, { foreignKey: 'created_by', as: 'authoredProblems' }); // Changed alias
+User.hasMany(Problem, { foreignKey: 'created_by', as: 'authoredProblems' }); // canged alias
 User.hasMany(Contest, { foreignKey: 'created_by', as: 'createdContests' });
 
-// Problem associations - Fix the foreign key mismatch
-Problem.belongsTo(User, { foreignKey: 'created_by', as: 'creator' }); // Changed to match your model
-Problem.hasMany(Submission, { foreignKey: 'problem_id', as: 'submissions' }); // Fixed foreign key
+Problem.belongsTo(User, { foreignKey: 'created_by', as: 'creator' }); 
+Problem.hasMany(Submission, { foreignKey: 'problem_id', as: 'submissions' }); 
 Problem.belongsToMany(Contest, { 
   through: ContestProblem, 
   foreignKey: 'problem_id',
@@ -47,7 +46,7 @@ Problem.belongsToMany(Contest, {
   as: 'contests'
 });
 
-// Contest associations
+// contest associations
 Contest.belongsTo(User, { foreignKey: 'created_by', as: 'creator' });
 Contest.belongsToMany(Problem, { 
   through: ContestProblem, 
@@ -57,12 +56,12 @@ Contest.belongsToMany(Problem, {
 });
 Contest.hasMany(Submission, { foreignKey: 'contest_id', as: 'submissions' });
 
-// Submission associations
+// submission association
 Submission.belongsTo(User, { foreignKey: 'user_id' });
 Submission.belongsTo(Problem, { foreignKey: 'problem_id' });
 Submission.belongsTo(Contest, { foreignKey: 'contest_id', required: false });
 
-// GrowthTrack associations
+// groawthtrack association
 GrowthTrack.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = db;

@@ -22,15 +22,14 @@ export default function Contests() {
   const loadContests = async () => {
     try {
       setLoading(true);
-      
-      // Mock contests data (replace with real API call later)
+    
       const mockContests = [
         {
           id: 1,
           name: 'Weekly Challenge #46',
           description: 'Test your skills with array and string problems',
           startTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-          duration: 120, // minutes
+          duration: 120,
           participants: 245,
           problems: 4,
           difficulty: 'Medium',
@@ -162,8 +161,6 @@ export default function Contests() {
           </div>
         </div>
       </motion.header>
-
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
         <motion.div
@@ -191,8 +188,6 @@ export default function Contests() {
             </button>
           ))}
         </motion.div>
-
-        {/* Contests Grid */}
         <motion.div
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           initial={{ opacity: 0, y: 20 }}

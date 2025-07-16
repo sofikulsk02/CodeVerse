@@ -35,7 +35,6 @@ const ProblemManagement = () => {
   const [filterDifficulty, setFilterDifficulty] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
-  // Form state for problem creation/editing
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -60,8 +59,6 @@ const ProblemManagement = () => {
       },
     ],
   });
-
-  // Mock data for initial display
   const mockProblems = [
     {
       id: 1,
@@ -140,7 +137,6 @@ const ProblemManagement = () => {
     try {
       setIsLoading(true);
 
-      // Try to fetch from API first
       const response = await fetch("http://localhost:5000/api/problems", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -157,10 +153,9 @@ const ProblemManagement = () => {
         }
       }
 
-      // Fallback to mock data if API fails
       console.log("API not available, using mock data");
       setProblems(mockProblems);
-      toast("Using demo data - API not connected"); // Changed from toast.info to toast
+      toast("Using demo data - API not connected");
     } catch (error) {
       console.error("Error loading problems:", error);
       setProblems(mockProblems);
@@ -223,8 +218,6 @@ const ProblemManagement = () => {
   const handleSaveProblem = async (isDraft = false) => {
     try {
       setIsLoading(true);
-
-      // Validate form data
       if (!formData.title.trim()) {
         toast.error("Title is required");
         return;
@@ -233,8 +226,6 @@ const ProblemManagement = () => {
         toast.error("Description is required");
         return;
       }
-
-      // Prepare the problem data
       const problemData = {
         title: formData.title,
         description: formData.description,
@@ -277,8 +268,6 @@ const ProblemManagement = () => {
             : "Problem created successfully!"
         );
         setIsModalOpen(false);
-
-        // Reload problems from API to get the latest data
         await loadProblems();
       } else {
         throw new Error(data.message || "Failed to save problem");
@@ -286,7 +275,6 @@ const ProblemManagement = () => {
     } catch (error) {
       console.error("❌ Error saving problem:", error);
 
-      // Fallback to local state update if API fails
       const problemDataWithMeta = {
         ...formData,
         status: isDraft ? "draft" : "published",
@@ -326,7 +314,6 @@ const ProblemManagement = () => {
     try {
       setIsLoading(true);
 
-      // Try API delete first
       const response = await fetch(
         `http://localhost:5000/api/problems/${problemId}`,
         {
@@ -342,20 +329,18 @@ const ProblemManagement = () => {
         const data = await response.json();
         if (data.success) {
           toast.success("Problem deleted successfully!");
-          // Reload problems from API
+          // reload problems from API
           await loadProblems();
           return;
         }
       }
 
-      // Fallback to local state if API fails
       setProblems((prevProblems) =>
         prevProblems.filter((p) => p.id !== problemId)
       );
       toast.error("API error - deleted locally only");
     } catch (error) {
       console.error("❌ Error deleting problem:", error);
-      // Fallback to local state
       setProblems((prevProblems) =>
         prevProblems.filter((p) => p.id !== problemId)
       );
@@ -395,7 +380,6 @@ const ProblemManagement = () => {
   };
 
   const handleBackToAdmin = () => {
-    // Set flag to refresh questions when returning to dashboard
     sessionStorage.setItem("shouldRefreshQuestions", "true");
     navigate("/admin/dashboard");
     toast.success("Returning to admin dashboard");
@@ -464,7 +448,7 @@ const ProblemManagement = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Background Effects */}
+
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 blur-3xl"
@@ -495,7 +479,7 @@ const ProblemManagement = () => {
       </div>
 
       <div className="relative z-10">
-        {/* Top Navigation */}
+
         <motion.nav
           className="bg-white/10 backdrop-blur-md border-b border-white/20"
           initial={{ opacity: 0, y: -20 }}
@@ -558,9 +542,8 @@ const ProblemManagement = () => {
           </div>
         </motion.nav>
 
-        {/* Main Content */}
         <div className="max-w-7xl mx-auto px-6 py-8">
-          {/* Header */}
+
           <motion.div
             className="flex justify-between items-center mb-8"
             initial={{ opacity: 0, y: 20 }}
@@ -582,8 +565,6 @@ const ProblemManagement = () => {
               <span>Add Problem</span>
             </motion.button>
           </motion.div>
-
-          {/* Filters and Search */}
           <motion.div
             className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-8 border border-white/20"
             initial={{ opacity: 0, y: 20 }}
@@ -658,15 +639,12 @@ const ProblemManagement = () => {
               </div>
             </div>
           </motion.div>
-
-          {/* Problems Grid */}
           <motion.div
             className="grid grid-cols-1 lg:grid-cols-3 gap-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            {/* Problems List */}
             <div className="lg:col-span-1 space-y-4 max-h-[800px] overflow-y-auto">
               <h3 className="text-lg font-semibold text-white mb-4">
                 Showing {filteredProblems.length} of {problems.length} problems

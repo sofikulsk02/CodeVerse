@@ -6,7 +6,7 @@ async function fixDemoUsers() {
     
     const demoUsers = [
       { email: 'admin@soma.edu', name: 'Admin User', role: 'admin' },
-      { email: 'instructor@soma.edu', name: 'Instructor User', role: 'instructor' }, // Changed from mentor to instructor
+      { email: 'instructor@soma.edu', name: 'Instructor User', role: 'instructor' }, // changed from mentor to instructor
       { email: 'student@soma.edu', name: 'Student User', role: 'student' }
     ];
 

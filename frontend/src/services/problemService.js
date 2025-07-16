@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Add token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -30,7 +29,6 @@ export const problemService = {
       return response.data;
     } catch (error) {
       console.error('Error fetching problems:', error);
-      // Return mock data if API fails
       return {
         problems: [],
         total: 0,

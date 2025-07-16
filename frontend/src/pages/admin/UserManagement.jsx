@@ -5,7 +5,7 @@ import {
   UserPlus, Shield, ShieldCheck, ShieldX, Eye, Download, Upload,
   Calendar, MapPin, GraduationCap, Award, Activity, Lock,
   Unlock, UserX, UserCheck, MessageSquare, Settings, RefreshCw,
-  School, ChevronLeft, ChevronRight, X  // Add these missing imports
+  School, ChevronLeft, ChevronRight, X 
 } from 'lucide-react';
 
 const UserManagement = () => {
@@ -20,8 +20,6 @@ const UserManagement = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [showBulkActions, setShowBulkActions] = useState(false);
-
-  // Mock data - replace with real API
   const mockUsers = [
     {
       id: 1,
@@ -86,7 +84,6 @@ const UserManagement = () => {
   ];
 
   useEffect(() => {
-    // Simulate API call
     setTimeout(() => {
       setUsers(mockUsers);
       setLoading(false);
@@ -178,9 +175,7 @@ const UserManagement = () => {
               <X className="w-5 h-5" />
             </button>
           </div>
-
           <form className="space-y-6">
-            {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -227,7 +222,6 @@ const UserManagement = () => {
               </div>
             </div>
 
-            {/* Academic Information */}
             <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Academic Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -267,8 +261,6 @@ const UserManagement = () => {
                 </div>
               </div>
             </div>
-
-            {/* Action Buttons */}
             <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
               <button
                 type="button"
@@ -303,7 +295,6 @@ const UserManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">User Management</h1>
@@ -329,8 +320,6 @@ const UserManagement = () => {
           </button>
         </div>
       </div>
-
-      {/* Filters and Search */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div className="flex items-center space-x-4">
@@ -370,7 +359,6 @@ const UserManagement = () => {
         </div>
       </div>
 
-      {/* Bulk Actions */}
       <AnimatePresence>
         {showBulkActions && (
           <motion.div
@@ -401,8 +389,6 @@ const UserManagement = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* User List */}
       <div className="grid grid-cols-1 gap-6">
         {currentUsers.map(user => (
           <motion.div
@@ -527,8 +513,6 @@ const UserManagement = () => {
           </motion.div>
         ))}
       </div>
-
-      {/* Pagination */}
       <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
         <div>
           Showing {currentPage} of {totalPages} pages
@@ -550,8 +534,6 @@ const UserManagement = () => {
           </button>
         </div>
       </div>
-
-      {/* User Modal - Create/Edit */}
       {showUserModal && (
         <UserModal
           user={editingUser}
@@ -561,10 +543,8 @@ const UserManagement = () => {
           }}
           onSave={(userData) => {
             if (editingUser) {
-              // Update existing user
               setUsers(users.map(user => user.id === editingUser.id ? { ...user, ...userData } : user));
             } else {
-              // Add new user
               setUsers([...users, { id: Date.now(), ...userData }]);
             }
             setShowUserModal(false);

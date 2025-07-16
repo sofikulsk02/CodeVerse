@@ -103,9 +103,6 @@ const startServer = async () => {
     await sequelize.sync({ alter: true });
     console.log('✅ Database tables synchronized!');
     
-    // Create demo users
-    //await createDemoUsers();
-    
     const server = app.listen(PORT, (err) => {
       if (err) {
         console.error('❌ Failed to start server:', err);
@@ -130,7 +127,6 @@ const startServer = async () => {
       process.exit(1);
     });
 
-    // Graceful shutdown
     process.on('SIGTERM', () => {
       console.log('🔄 SIGTERM received, shutting down gracefully...');
       server.close(() => {

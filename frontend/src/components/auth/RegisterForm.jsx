@@ -37,7 +37,7 @@ export default function RegisterForm({ onSwitchToLogin }) {
         name: data.name,
         email: data.email,
         password: data.password,
-        role: 'student', // Default role
+        role: 'student', // default role
       });
       toast.success('Registration successful!');
     } catch (error) {

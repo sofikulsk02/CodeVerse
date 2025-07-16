@@ -1,7 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
-// Test token generation
+
 const testUser = {
   userId: 1,
   email: 'admin@soma.edu',
@@ -12,7 +12,7 @@ const token = jwt.sign(testUser, process.env.JWT_SECRET || 'your-secret-key', { 
 console.log('Generated token:', token);
 console.log('Token parts:', token.split('.').length);
 
-// Test token verification
+
 try {
   const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
   console.log('Decoded token:', decoded);

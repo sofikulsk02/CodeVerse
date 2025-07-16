@@ -26,7 +26,7 @@ export default function LoginForm({ onSwitchToRegister }) {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      email: 'student@soma.edu', // Pre-fill for demo
+      email: 'student@soma.edu', 
       password: 'password123'
     }
   });
@@ -39,7 +39,7 @@ export default function LoginForm({ onSwitchToRegister }) {
       if (result.success) {
         toast.success(`Welcome back, ${result.user.name}!`);
         
-        // Navigate based on role - KEEP CURRENT WORKING LOGIC
+        // Navigate based on rol
         switch (result.user.role) {
           case 'admin':
             navigate('/admin/dashboard');
@@ -63,7 +63,7 @@ export default function LoginForm({ onSwitchToRegister }) {
     }
   };
 
-  // Demo account quick login
+  // Demo account
   const handleDemoLogin = async (email, role) => {
     setIsLoading(true);
     const result = await login(email, 'password123');
@@ -71,7 +71,7 @@ export default function LoginForm({ onSwitchToRegister }) {
     if (result.success) {
       toast.success(`Logged in as ${result.user.role}!`);
       
-      // Navigate based on role - KEEP CURRENT WORKING LOGIC
+      // navigate based on role
       switch (result.user.role) {
         case 'admin':
           navigate('/admin/dashboard');
@@ -99,7 +99,7 @@ export default function LoginForm({ onSwitchToRegister }) {
       transition={{ duration: 0.3 }}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Email Field */}
+        {/* email field */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -128,7 +128,7 @@ export default function LoginForm({ onSwitchToRegister }) {
           )}
         </motion.div>
 
-        {/* Password Field */}
+        {/* ppassword field */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -190,7 +190,7 @@ export default function LoginForm({ onSwitchToRegister }) {
           )}
         </motion.button>
 
-        {/* Demo Accounts */}
+        {/* demo Accounts */}
         <motion.div
           className="pt-6 border-t border-white/20"
           initial={{ opacity: 0 }}
@@ -227,7 +227,7 @@ export default function LoginForm({ onSwitchToRegister }) {
         </motion.div>
       </form>
 
-      {/* Switch to Register */}
+      {/* switch to register */}
       <motion.div
         className="text-center mt-6"
         initial={{ opacity: 0 }}

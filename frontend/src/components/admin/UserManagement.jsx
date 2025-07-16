@@ -71,7 +71,7 @@ const UserManagement = () => {
       });
       
       if (response.ok) {
-        fetchUsers(); // Refresh the list
+        fetchUsers(); // h
       }
     } catch (error) {
       console.error('Error updating user status:', error);

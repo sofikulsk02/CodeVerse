@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     title: {
-      type: DataTypes.STRING(200), // character varying(200)
+      type: DataTypes.STRING(200),
       allowNull: false
     },
     description: {
@@ -18,42 +18,42 @@ module.exports = (sequelize) => {
     },
     constraints: {
       type: DataTypes.TEXT,
-      allowNull: true // YES
+      allowNull: true 
     },
     testCases: {
       type: DataTypes.JSON,
-      allowNull: true, // YES
+      allowNull: true, 
       field: 'test_cases'
     },
     difficulty: {
       type: DataTypes.ENUM('easy', 'medium', 'hard'),
-      allowNull: false, // NO
+      allowNull: false, 
       defaultValue: 'medium'
     },
     tags: {
-      type: DataTypes.ARRAY(DataTypes.STRING), // ARRAY, not JSON!
-      allowNull: true // YES
+      type: DataTypes.ARRAY(DataTypes.STRING), 
+      allowNull: true 
     },
     timeLimit: {
       type: DataTypes.INTEGER,
-      allowNull: false, // NO
+      allowNull: false, 
       defaultValue: 2000,
       field: 'time_limit'
     },
     memoryLimit: {
       type: DataTypes.INTEGER,
-      allowNull: false, // NO
+      allowNull: false, 
       defaultValue: 256,
       field: 'memory_limit'
     },
     points: {
       type: DataTypes.INTEGER,
-      allowNull: false, // NO
+      allowNull: false,
       defaultValue: 100
     },
     createdBy: {
       type: DataTypes.UUID,
-      allowNull: false, // NO
+      allowNull: false, 
       references: {
         model: 'users',
         key: 'id'
@@ -62,41 +62,41 @@ module.exports = (sequelize) => {
     },
     isActive: {
       type: DataTypes.BOOLEAN,
-      allowNull: false, // NO
+      allowNull: false, 
       defaultValue: true,
       field: 'is_active'
     },
     allowedLanguages: {
-      type: DataTypes.ARRAY(DataTypes.STRING), // ARRAY, not JSON!
-      allowNull: false, // NO
+      type: DataTypes.ARRAY(DataTypes.STRING), 
+      allowNull: false, 
       defaultValue: ['javascript', 'python', 'java', 'cpp'],
       field: 'allowed_languages'
     },
     slug: {
-      type: DataTypes.STRING(250), // character varying(250)
-      allowNull: false // NO
+      type: DataTypes.STRING(250), 
+      allowNull: false 
     },
     category: {
-      type: DataTypes.STRING(50), // character varying(50)
-      allowNull: false // NO
+      type: DataTypes.STRING(50), 
+      allowNull: false 
     },
     examples: {
       type: DataTypes.JSON,
-      allowNull: true, // YES
+      allowNull: true, 
       defaultValue: []
     },
     hints: {
       type: DataTypes.JSON,
-      allowNull: true, // YES
+      allowNull: true, 
       defaultValue: []
     },
     solution: {
       type: DataTypes.TEXT,
-      allowNull: true // YES
+      allowNull: true 
     },
     solutionApproach: {
       type: DataTypes.TEXT,
-      allowNull: true, // YES
+      allowNull: true, 
       field: 'solution_approach'
     }
   }, {

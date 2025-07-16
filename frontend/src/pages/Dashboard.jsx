@@ -32,8 +32,6 @@ export default function Dashboard() {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      
-      // Try to load user stats from API
       try {
         const response = await fetch('http://localhost:5000/api/users/stats', {
           headers: {
@@ -55,7 +53,6 @@ export default function Dashboard() {
         }
       } catch (apiError) {
         console.log('API not available, using mock data');
-        // Use mock data if API fails
         setStats({
           problemsSolved: 0,
           contestRank: 'New',
@@ -66,8 +63,6 @@ export default function Dashboard() {
           acceptedSubmissions: 0
         });
       }
-
-      // Mock recent activity
       setRecentActivity([
         {
           id: 1,
@@ -87,7 +82,6 @@ export default function Dashboard() {
 
     } catch (error) {
       console.error('Error loading dashboard:', error);
-      // Don't show error toast, just use default values
     } finally {
       setLoading(false);
     }
@@ -208,10 +202,7 @@ export default function Dashboard() {
           </div>
         </div>
       </motion.header>
-
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
         <motion.div
           className="mb-8"
           initial={{ opacity: 0, y: 20 }}
@@ -223,8 +214,6 @@ export default function Dashboard() {
           </h2>
           <p className="text-white/70 text-lg">Ready to solve some problems today?</p>
         </motion.div>
-
-        {/* Stats Grid */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
           initial={{ opacity: 0, y: 20 }}
@@ -252,15 +241,12 @@ export default function Dashboard() {
             </motion.div>
           ))}
         </motion.div>
-
-        {/* Action Cards */}
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          {/* Quick Actions */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center">
               <Zap className="w-5 h-5 mr-2 text-yellow-400" />
@@ -307,8 +293,6 @@ export default function Dashboard() {
               </motion.button>
             </div>
           </div>
-
-          {/* Recent Activity */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center">
               <Calendar className="w-5 h-5 mr-2 text-blue-400" />

@@ -5,7 +5,7 @@ const getUserStats = async (req, res) => {
   try {
     const userId = req.params.id || req.user.id;
 
-    // Get overall stats from GrowthTrack
+    // get overall stats from growthTrack
     const stats = await GrowthTrack.getUserStats(userId);
 
     // Get recent submissions
@@ -21,7 +21,7 @@ const getUserStats = async (req, res) => {
       ]
     });
 
-    // Get weekly progress
+    // get weekly progress
     const weeklyProgress = await GrowthTrack.getWeeklyProgress(userId, 12);
 
     res.json({

@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
     },
     userId: {
       type: DataTypes.UUID,
-      allowNull: false, // NOT NULL
+      allowNull: false, 
       references: {
         model: 'users',
         key: 'id'
@@ -18,7 +18,7 @@ module.exports = (sequelize) => {
     },
     problemId: {
       type: DataTypes.UUID,
-      allowNull: false, // NOT NULL
+      allowNull: false, 
       references: {
         model: 'problems',
         key: 'id'
@@ -27,7 +27,7 @@ module.exports = (sequelize) => {
     },
     contestId: {
       type: DataTypes.UUID,
-      allowNull: true, // YES - nullable
+      allowNull: true, 
       references: {
         model: 'contests',
         key: 'id'

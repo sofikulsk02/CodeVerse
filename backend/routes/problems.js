@@ -10,7 +10,7 @@ const {
   deleteProblem
 } = require('../controllers/problemController');
 
-// Validation middleware - updated to match your model
+// validation middleware
 const validateProblem = [
   body('title').trim().isLength({ min: 1, max: 200 }).withMessage('Title must be between 1 and 200 characters'),
   body('description').trim().isLength({ min: 10 }).withMessage('Description must be at least 10 characters'),
@@ -20,7 +20,7 @@ const validateProblem = [
   body('memoryLimit').optional().isInt({ min: 16, max: 512 }).withMessage('Memory limit must be between 16 and 512 MB')
 ];
 
-// Routes
+// routesc
 router.get('/', authenticateToken, getAllProblems);
 router.post('/', authenticateToken, requireAdmin, validateProblem, createProblem);
 router.put('/:id', authenticateToken, requireAdmin, validateProblem, updateProblem);

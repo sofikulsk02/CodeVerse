@@ -7,7 +7,6 @@ import RegisterForm from "../components/auth/RegisterForm";
 import { Sparkles, Code2, Trophy, Users } from "lucide-react";
 import toast from "react-hot-toast";
 
-// Demo Login Button Component
 const DemoLoginButton = ({ role, color, email }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -23,8 +22,6 @@ const DemoLoginButton = ({ role, color, email }) => {
 
       if (result.success) {
         toast.success(`🎉 Logged in as ${role}!`);
-
-        // Navigate based on role
         setTimeout(() => {
           switch (result.user.role) {
             case "admin":
@@ -96,8 +93,7 @@ export default function AuthPage() {
   ];
 
   return (
-    <div className="min-h-screen  bg-gradient-to-r from-teal-300 to-teal-500 flex items-center justify-center p-4">
-      {/* Background Effects - Same as your screenshot */}
+    <div className="min-h-screen  bg-gradient-to-r from-slate-900 to-slate-700 flex items-center justify-center p-4">
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 blur-3xl"
@@ -129,7 +125,6 @@ export default function AuthPage() {
 
       <div className="relative z-10 w-full max-w-6xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Side - Branding (exactly like your screenshot) */}
           <motion.div
             className="text-center lg:text-left"
             initial={{ opacity: 0, x: -50 }}
@@ -143,10 +138,10 @@ export default function AuthPage() {
               <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl flex items-center justify-center mr-4">
                 <Sparkles className="w-7 h-7 text-white" />
               </div>
-              <h1 className="text-4xl font-bold text-black">codeVerse</h1>
+              <h1 className="text-4xl font-bold text-white">codeVerse</h1>
             </motion.div>
             <motion.h2
-              className="text-3xl lg:text-4xl font-bold text-black mb-6"
+              className="text-3xl lg:mt-[-20px] lg:text-4xl font-bold text-white mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -158,7 +153,7 @@ export default function AuthPage() {
             </motion.h2>
 
             <motion.p
-              className="text-black text-lg mb-8 max-w-md mx-auto lg:mx-0"
+              className="text-white text-lg mb-8 max-w-md mx-auto lg:mx-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -166,8 +161,6 @@ export default function AuthPage() {
               Join thousands of students improving their coding skills through
               hands-on practice and friendly competition.
             </motion.p>
-
-            {/* Features - exactly like your screenshot */}
             <motion.div
               className="grid gap-6"
               initial={{ opacity: 0, y: 20 }}
@@ -186,17 +179,15 @@ export default function AuthPage() {
                     <feature.icon className="w-5 h-5 text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="text-black font-semibold">
+                    <h3 className="text-white font-semibold">
                       {feature.title}
                     </h3>
-                    <p className="text-black text-sm">{feature.description}</p>
+                    <p className="text-white text-sm">{feature.description}</p>
                   </div>
                 </motion.div>
               ))}
             </motion.div>
           </motion.div>
-
-          {/* Right Side - Auth Form (exactly like your screenshot) */}
           <motion.div
             className="w-full max-w-md mx-auto"
             initial={{ opacity: 0, x: 50 }}
@@ -204,24 +195,23 @@ export default function AuthPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-black mb-2">
+              <h3 className="text-2xl font-bold text-white mb-2">
                 {isLogin ? "Welcome Back!" : "Join CodeVerse"}
               </h3>
-              <p className="text-black">
+              <p className="text-white">
                 {isLogin
                   ? "Sign in to continue your journey"
                   : "Start your coding adventure today"}
               </p>
             </div>
 
-            {/* Demo Login Buttons - exactly like your screenshot */}
             <motion.div
               className="mb-6 p-4 bg-white/5 backdrop-blur rounded-xl border border-white/10"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
             >
-              <p className="text-black text-sm text-center mb-3">
+              <p className="text-white text-sm text-center mb-3">
                 🚀 Quick Demo Access:
               </p>
               <div className="grid grid-cols-3 gap-2">
@@ -241,7 +231,7 @@ export default function AuthPage() {
                   color="bg-green-500 hover:bg-green-600 text-white"
                 />
               </div>
-              <p className="text-black text-xs text-center mt-2">
+              <p className="text-white text-xs text-center mt-2">
                 All demo accounts use password:{" "}
                 <code className="bg-white/10 px-1 rounded">password123</code>
               </p>

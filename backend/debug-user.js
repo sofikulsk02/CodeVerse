@@ -3,11 +3,11 @@ const { User } = require('./models');
 
 async function recreateAdmin() {
   try {
-    // Delete existing admin
+    // delete existing admin
     await User.destroy({ where: { email: 'admin@soma.edu' } });
     console.log('🗑️ Deleted existing admin user');
 
-    // Create new admin with properly hashed password
+    // create new admin with properly hashed password
     const hashedPassword = await bcrypt.hash('password123', 12);
     console.log('🔐 Hashed password:', hashedPassword);
 
@@ -26,7 +26,7 @@ async function recreateAdmin() {
     console.log('🔑 Password: password123');
     console.log('👑 Role:', admin.role);
     
-    // Test password comparison
+    // test password comparison
     const testComparison = await bcrypt.compare('password123', admin.password);
     console.log('🧪 Test password comparison:', testComparison);
     

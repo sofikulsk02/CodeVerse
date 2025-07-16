@@ -40,8 +40,7 @@ const AdminDashboard = () => {
   const [questions, setQuestions] = useState([]);
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  // Mock data - replace with actual API calls
+  //mock
   const mockUsers = [
     { id: 1, name: 'sofikul sk', email: 'rajibsk563@.edu', role: 'student', status: 'active', joinedAt: '2022-12-15', problemsSolved: 25 },
     { id: 2, name: 'Ajim sk', email: 'Ajim12@.edu', role: 'mentor', status: 'active', joinedAt: '2022-12-10', problemsSolved: 45 },
@@ -57,7 +56,7 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       
-      // Load real problems from API
+      //api real
       const response = await fetch('http://localhost:5000/api/problems', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -68,7 +67,6 @@ const AdminDashboard = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.data) {
-          // Transform problems to match dashboard question format
           const transformedQuestions = data.data.problems.map(problem => ({
             id: problem.id,
             title: problem.title,
@@ -83,7 +81,6 @@ const AdminDashboard = () => {
           console.log('✅ Dashboard questions updated:', transformedQuestions.length);
         }
       } else {
-        // Fallback to mock data if API fails
         console.log('API not available, using mock questions');
         setQuestions([
           { id: 1, title: 'Two Sum', difficulty: 'Easy', category: 'Arrays', status: 'published', submissions: 150, accuracy: 85 },
@@ -94,7 +91,6 @@ const AdminDashboard = () => {
       
     } catch (error) {
       console.error('Error loading dashboard data:', error);
-      // Fallback to mock data
       setQuestions([
         { id: 1, title: 'Two Sum', difficulty: 'Easy', category: 'Arrays', status: 'published', submissions: 150, accuracy: 85 },
         { id: 2, title: 'Binary Tree Traversal', difficulty: 'Medium', category: 'Trees', status: 'draft', submissions: 89, accuracy: 72 },
@@ -116,9 +112,8 @@ const AdminDashboard = () => {
     toast.success('Returning to main dashboard');
   };
 
-  // Add these new navigation functions
+
   const handleNavigateToQuestions = () => {
-    // Store a flag to refresh when coming back
     sessionStorage.setItem('shouldRefreshQuestions', 'true');
     navigate('/admin/problems');
   };
@@ -159,8 +154,7 @@ const AdminDashboard = () => {
 
     try {
       setLoading(true);
-      
-      // Try to delete from API
+    
       const response = await fetch(`http://localhost:5000/api/problems/${questionId}`, {
         method: 'DELETE',
         headers: {
@@ -173,19 +167,15 @@ const AdminDashboard = () => {
         const data = await response.json();
         if (data.success) {
           toast.success('Question deleted successfully!');
-          // Refresh the questions list
           await loadDashboardData();
           return;
         }
       }
-      
-      // Fallback to local state update if API fails
       setQuestions(prevQuestions => prevQuestions.filter(q => q.id !== questionId));
       toast.error('API error - deleted locally only');
       
     } catch (error) {
       console.error('Error deleting question:', error);
-      // Fallback to local state update
       setQuestions(prevQuestions => prevQuestions.filter(q => q.id !== questionId));
       toast.error('API error - deleted locally only');
     } finally {
@@ -254,7 +244,6 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -286,8 +275,6 @@ const AdminDashboard = () => {
             </div>
           </div>
         </motion.div>
-
-        {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -817,7 +804,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Background Effects - Same as Auth Page */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div 
           className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 blur-3xl"
@@ -848,7 +834,6 @@ const AdminDashboard = () => {
       </div>
 
       <div className="relative z-10">
-        {/* Top Navigation Bar - Glassmorphism Style */}
         <motion.nav 
           className="bg-white/10 backdrop-blur-md border-b border-white/20"
           initial={{ opacity: 0, y: -20 }}
@@ -856,7 +841,6 @@ const AdminDashboard = () => {
         >
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex justify-between items-center h-16">
-              {/* Left Side - Logo and Title */}
               <motion.div 
                 className="flex items-center"
                 whileHover={{ scale: 1.02 }}
@@ -869,8 +853,7 @@ const AdminDashboard = () => {
                   <p className="text-xs text-white/60">Admin Panel</p>
                 </div>
               </motion.div>
-              
-              {/* Right Side - Navigation Actions */}
+            
               <div className="flex items-center space-x-4">
                 <motion.button
                   onClick={handleBackToHome}
@@ -918,7 +901,6 @@ const AdminDashboard = () => {
         </motion.nav>
 
         <div className="flex">
-          {/* Sidebar - Glassmorphism Style */}
           <motion.div 
             className="w-64 bg-white/5 backdrop-blur-md border-r border-white/20 min-h-screen"
             initial={{ opacity: 0, x: -20 }}
@@ -948,8 +930,6 @@ const AdminDashboard = () => {
               </div>
             </nav>
           </motion.div>
-
-          {/* Main Content Area */}
           <div className="flex-1 p-8">
             <AnimatePresence mode="wait">
               <motion.div

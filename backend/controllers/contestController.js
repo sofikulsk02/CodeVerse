@@ -132,7 +132,7 @@ const updateContest = async (req, res) => {
 
     await contest.update(updateData);
 
-    // Update contest problems if provided
+    // Update Contest problems if provided
     if (problem_ids) {
       await ContestProblem.destroy({ where: { contest_id: id } });
       if (problem_ids.length > 0) {

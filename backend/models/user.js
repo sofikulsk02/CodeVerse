@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 module.exports = (sequelize) => {
   const User = sequelize.define('User', {
     id: {
-      type: DataTypes.UUID,  // Match existing database
+      type: DataTypes.UUID,  // msatch existing database
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4
     },
@@ -22,7 +22,7 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     role: {
-      type: DataTypes.ENUM('admin', 'mentor', 'instructor', 'student'), // Added instructor
+      type: DataTypes.ENUM('admin', 'mentor', 'instructor', 'student'),
       allowNull: false,
       defaultValue: 'student'
     },
@@ -159,7 +159,7 @@ module.exports = (sequelize) => {
     hooks: {
       beforeCreate: async (user) => {
         if (user.password) {
-          user.password = await bcrypt.hash(user.password, 10);  // ← This was double-hashing!
+          user.password = await bcrypt.hash(user.password, 10);  // ← this was double-hashing!
         }
       },
       beforeUpdate: async (user) => {
@@ -170,7 +170,7 @@ module.exports = (sequelize) => {
     }
   });
 
-  // Add instance methods
+  
   User.prototype.validatePassword = async function(password) {
     return await bcrypt.compare(password, this.password);
   };

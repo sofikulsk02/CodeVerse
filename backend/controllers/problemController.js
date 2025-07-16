@@ -8,7 +8,7 @@ const getAllProblems = async (req, res) => {
     const { page = 1, limit = 50, difficulty, category, search } = req.query;
     const offset = (page - 1) * limit;
 
-    const whereClause = { is_active: true }; // Use underscore format
+    const whereClause = { is_active: true }; 
     
     if (difficulty) whereClause.difficulty = difficulty;
     if (category) whereClause.category = category;
@@ -23,7 +23,7 @@ const getAllProblems = async (req, res) => {
       where: whereClause,
       limit: parseInt(limit),
       offset: offset,
-      order: [['created_at', 'DESC']], // Use underscore format
+      order: [['created_at', 'DESC']], 
       include: [
         {
           model: User,
@@ -35,7 +35,6 @@ const getAllProblems = async (req, res) => {
 
     console.log(`✅ Found ${count} problems`);
 
-    // Transform data to match frontend expectations
     const transformedProblems = problems.map(problem => ({
       id: problem.id,
       title: problem.title,
@@ -49,7 +48,7 @@ const getAllProblems = async (req, res) => {
       examples: problem.examples || [],
       testCases: problem.testCases || [],
       author: problem.creator?.name || 'Unknown',
-      createdAt: problem.created_at, // Map underscore to camelCase for frontend
+      createdAt: problem.created_at, 
       acceptanceRate: 0,
       submissions: 0
     }));
@@ -103,7 +102,6 @@ const createProblem = async (req, res) => {
     console.log('📝 Problem data:', { title, difficulty, category });
     console.log('👤 User creating:', req.user);
 
-    // Generate slug from title
     const slug = title.toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
@@ -169,7 +167,7 @@ const updateProblem = async (req, res) => {
     console.log('🔨 Updating problem:', id);
 
     const problem = await Problem.findOne({
-      where: { id, is_active: true } // Use underscore format
+      where: { id, is_active: true } 
     });
 
     if (!problem) {
@@ -226,7 +224,7 @@ const deleteProblem = async (req, res) => {
     const { id } = req.params;
 
     const problem = await Problem.findOne({
-      where: { id, is_active: true } // Use underscore format
+      where: { id, is_active: true } 
     });
 
     if (!problem) {

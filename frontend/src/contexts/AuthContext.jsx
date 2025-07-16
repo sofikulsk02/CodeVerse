@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      // Validate JWT token format (should have 3 parts separated by dots)
+      // Validate JwT token forma
       const tokenParts = token.split('.');
       if (tokenParts.length !== 3) {
         console.log('⚠️ Invalid token format, clearing storage');
@@ -46,12 +46,10 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
         return;
       }
-
-      // Validate that token contains valid base64 data
+//this is initial 
       try {
         atob(tokenParts[0]); // header
         atob(tokenParts[1]); // payload
-        // signature part (tokenParts[2]) doesn't need to be valid base64
       } catch (error) {
         console.log('⚠️ Token contains invalid base64, clearing storage');
         clearAuthData();
@@ -76,7 +74,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✨ Enhanced login method with better error handling
   const login = async (email, password) => {
     try {
       console.log('🔐 AuthContext login attempt:', { email });
@@ -94,14 +91,12 @@ export const AuthProvider = ({ children }) => {
       console.log('🔍 Login response data:', data);
 
       if (data.success && data.user && data.token) {
-        // Validate token before storing
         const tokenParts = data.token.split('.');
         if (tokenParts.length !== 3) {
           console.error('❌ Received invalid token format from server');
           return { success: false, message: 'Invalid token received from server' };
         }
 
-        // Store token and user data consistently
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         setUser(data.user);

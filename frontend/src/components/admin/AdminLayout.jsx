@@ -134,7 +134,7 @@ const AdminLayout = () => {
                   ))}
                 </nav>
 
-                {/* User Profile */}
+                {/* User profile */}
                 <div className="border-t border-gray-200 dark:border-gray-700 p-4">
                   <div className="relative">
                     <button
@@ -203,9 +203,9 @@ const AdminLayout = () => {
           )}
         </AnimatePresence>
 
-        {/* Main Content */}
+        {/* main Content */}
         <div className={`${sidebarOpen ? 'lg:pl-70' : ''} transition-all duration-300`}>
-          {/* Top Header */}
+          {/* top header */}
           <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
             <div className="px-4 sm:px-6 lg:px-8">
               <div className="flex h-16 justify-between items-center">
@@ -217,7 +217,7 @@ const AdminLayout = () => {
                     <Menu className="w-5 h-5" />
                   </button>
 
-                  {/* Search Bar */}
+                  {/* search Bar */}
                   <div className="hidden md:flex relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Search className="h-4 w-4 text-gray-400" />
@@ -230,15 +230,15 @@ const AdminLayout = () => {
                   </div>
                 </div>
 
-                {/* Right side actions */}
+                {/* right side actions */}
                 <div className="flex items-center space-x-4">
-                  {/* Notifications */}
+                  {/* notifications */}
                   <button className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                   </button>
 
-                  {/* Quick Actions */}
+                  {/* quick Action */}
                   <div className="hidden sm:flex items-center space-x-2">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -262,13 +262,13 @@ const AdminLayout = () => {
             </div>
           </header>
 
-          {/* Page Content */}
+          {/* page content */}
           <main className="p-4 sm:p-6 lg:p-8">
             <Outlet />
           </main>
         </div>
 
-        {/* Mobile Sidebar Overlay */}
+        {/* mobile sidebar Overlay */}
         {sidebarOpen && (
           <div
             className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"

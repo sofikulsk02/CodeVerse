@@ -56,7 +56,7 @@ const ContestModal = ({ isOpen, onClose, contest = null, onSave }) => {
       [field]: value
     }));
     
-    // Clear error when user starts typing
+    // clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({
         ...prev,
@@ -132,7 +132,7 @@ const ContestModal = ({ isOpen, onClose, contest = null, onSave }) => {
         ...formData,
         id: contest?.id || Date.now(),
         createdAt: contest?.createdAt || new Date().toISOString(),
-        createdBy: 'Admin User', // Replace with actual user
+        createdBy: 'Admin User', 
         participants: contest?.participants || 0,
         problemCount: formData.problems.length,
         status: contest?.status || 'upcoming'
@@ -301,7 +301,7 @@ const ContestModal = ({ isOpen, onClose, contest = null, onSave }) => {
                 </div>
               </div>
 
-              {/* Contest Rules */}
+              {/* contest rules */}
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -340,7 +340,7 @@ const ContestModal = ({ isOpen, onClose, contest = null, onSave }) => {
                 </div>
               </div>
 
-              {/* Banner Image */}
+              {/* banner image */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Banner Image
@@ -382,7 +382,7 @@ const ContestModal = ({ isOpen, onClose, contest = null, onSave }) => {
             </form>
           </div>
 
-          {/* Footer */}
+          {/* footer */}
           <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
             <button
               type="button"
