@@ -1,26 +1,36 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Code2, Trophy, Target, TrendingUp, Calendar, 
-  BookOpen, Award, Users, LogOut, Settings,
-  ChevronRight, Sparkles, Zap
-} from 'lucide-react';
-import toast from 'react-hot-toast';
-import { problemService } from '../services/problemService';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import {
+  Code2,
+  Trophy,
+  Target,
+  TrendingUp,
+  Calendar,
+  BookOpen,
+  Award,
+  Users,
+  LogOut,
+  Settings,
+  ChevronRight,
+  Sparkles,
+  Zap,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import { problemService } from "../services/problemService";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     problemsSolved: 0,
-    contestRank: 'New',
+    contestRank: "New",
     currentStreak: 0,
     successRate: 0,
     totalPoints: 0,
     totalSubmissions: 0,
-    acceptedSubmissions: 0
+    acceptedSubmissions: 0,
   });
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,55 +43,54 @@ export default function Dashboard() {
     try {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:5000/api/users/stats', {
+        const response = await fetch("http://localhost:5000/api/users/stats", {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
         });
-        
+
         if (response.ok) {
           const statsData = await response.json();
           setStats({
             problemsSolved: statsData.stats?.totalSolved || 0,
-            contestRank: statsData.stats?.rank || 'New',
+            contestRank: statsData.stats?.rank || "New",
             currentStreak: statsData.stats?.streakDays || 0,
             successRate: statsData.stats?.accuracy || 0,
             totalPoints: statsData.stats?.totalPoints || 0,
             totalSubmissions: statsData.stats?.totalSubmissions || 0,
-            acceptedSubmissions: statsData.stats?.acceptedSubmissions || 0
+            acceptedSubmissions: statsData.stats?.acceptedSubmissions || 0,
           });
         }
       } catch (apiError) {
-        console.log('API not available, using mock data');
+        console.log("API not available, using mock data");
         setStats({
           problemsSolved: 0,
-          contestRank: 'New',
+          contestRank: "New",
           currentStreak: 0,
           successRate: 0,
           totalPoints: 0,
           totalSubmissions: 0,
-          acceptedSubmissions: 0
+          acceptedSubmissions: 0,
         });
       }
       setRecentActivity([
         {
           id: 1,
-          type: 'welcome',
-          title: 'Welcome to Jadavpur Univercity!',
-          time: 'Just now',
-          icon: '🎉'
+          type: "welcome",
+          title: "Welcome to Jadavpur Univercity!",
+          time: "Just now",
+          icon: "🎉",
         },
         {
           id: 2,
-          type: 'info',
-          title: 'Start solving problems to track your progress',
-          time: 'Getting started',
-          icon: '💡'
-        }
+          type: "info",
+          title: "Start solving problems to track your progress",
+          time: "Getting started",
+          icon: "💡",
+        },
       ]);
-
     } catch (error) {
-      console.error('Error loading dashboard:', error);
+      console.error("Error loading dashboard:", error);
     } finally {
       setLoading(false);
     }
@@ -89,42 +98,42 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     logout();
-    toast.success('Logged out successfully');
-    navigate('/auth');
+    toast.success("Logged out successfully");
+    navigate("/auth");
   };
 
   const statCards = [
     {
-      label: 'Problems Solved',
+      label: "Problems Solved",
       value: stats.problemsSolved,
       icon: Code2,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200'
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      borderColor: "border-blue-200",
     },
     {
-      label: 'Contest Rank',
+      label: "Contest Rank",
       value: stats.contestRank,
       icon: Trophy,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200'
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      borderColor: "border-green-200",
     },
     {
-      label: 'Current Streak',
+      label: "Current Streak",
       value: `${stats.currentStreak} days`,
       icon: Target,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200'
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
+      borderColor: "border-orange-200",
     },
     {
-      label: 'Success Rate',
+      label: "Success Rate",
       value: `${Math.round(stats.successRate)}%`,
       icon: TrendingUp,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-200'
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      borderColor: "border-purple-200",
     },
   ];
 
@@ -168,14 +177,14 @@ export default function Dashboard() {
 
             <div className="flex items-center space-x-4">
               <motion.button
-                onClick={() => navigate('/problems')}
+                onClick={() => navigate("/problems")}
                 className="text-white/80 hover:text-white transition-colors duration-300"
                 whileHover={{ scale: 1.05 }}
               >
                 <BookOpen className="w-5 h-5" />
               </motion.button>
               <motion.button
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate("/profile")}
                 className="text-white/80 hover:text-white transition-colors duration-300"
                 whileHover={{ scale: 1.05 }}
               >
@@ -188,11 +197,13 @@ export default function Dashboard() {
               >
                 <LogOut className="w-5 h-5" />
               </motion.button>
-              
+
               <div className="flex items-center space-x-3">
                 <div className="text-right">
                   <div className="text-white font-medium">{user?.name}</div>
-                  <div className="text-white/60 text-sm capitalize">{user?.role}</div>
+                  <div className="text-white/60 text-sm capitalize">
+                    {user?.role}
+                  </div>
                 </div>
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
                   {user?.name?.charAt(0)?.toUpperCase()}
@@ -212,7 +223,9 @@ export default function Dashboard() {
           <h2 className="text-4xl font-bold text-white mb-2">
             Welcome back, {user?.name}! 👋
           </h2>
-          <p className="text-white/70 text-lg">Ready to solve some problems today?</p>
+          <p className="text-white/70 text-lg">
+            Ready to solve some problems today?
+          </p>
         </motion.div>
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
@@ -231,8 +244,12 @@ export default function Dashboard() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  <p className="text-sm font-medium text-gray-600 mb-1">
+                    {stat.label}
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stat.value}
+                  </p>
                 </div>
                 <div className={`p-3 rounded-xl ${stat.bgColor}`}>
                   <stat.icon className={`w-6 h-6 ${stat.color}`} />
@@ -254,7 +271,7 @@ export default function Dashboard() {
             </h3>
             <div className="space-y-4">
               <motion.button
-                onClick={() => navigate('/problems')}
+                onClick={() => navigate("/problems")}
                 className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-white p-4 rounded-xl transition-all duration-300 flex items-center justify-between group"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -267,7 +284,7 @@ export default function Dashboard() {
               </motion.button>
 
               <motion.button
-                onClick={() => navigate('/contests')}
+                onClick={() => navigate("/contests")}
                 className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-white p-4 rounded-xl transition-all duration-300 flex items-center justify-between group"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -280,7 +297,7 @@ export default function Dashboard() {
               </motion.button>
 
               <motion.button
-                onClick={() => navigate('/leaderboard')}
+                onClick={() => navigate("/leaderboard")}
                 className="w-full bg-green-500/20 hover:bg-green-500/30 text-white p-4 rounded-xl transition-all duration-300 flex items-center justify-between group"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -301,7 +318,10 @@ export default function Dashboard() {
             <div className="space-y-4">
               {recentActivity.length > 0 ? (
                 recentActivity.map((activity) => (
-                  <div key={activity.id} className="flex items-center p-3 bg-white/5 rounded-lg">
+                  <div
+                    key={activity.id}
+                    className="flex items-center p-3 bg-white/5 rounded-lg"
+                  >
                     <span className="text-2xl mr-3">{activity.icon}</span>
                     <div className="flex-1">
                       <p className="text-white font-medium">{activity.title}</p>
@@ -313,7 +333,9 @@ export default function Dashboard() {
                 <div className="text-center py-8">
                   <div className="text-4xl mb-2">🎯</div>
                   <p className="text-white/60">No recent activity</p>
-                  <p className="text-white/40 text-sm">Start solving problems to see your progress!</p>
+                  <p className="text-white/40 text-sm">
+                    Start solving problems to see your progress!
+                  </p>
                 </div>
               )}
             </div>

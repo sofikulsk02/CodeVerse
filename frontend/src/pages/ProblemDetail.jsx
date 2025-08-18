@@ -1,26 +1,27 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { problemService } from '../services/problemService';
-import { 
-  ArrowLeft, 
-  Play, 
-  Save, 
-  Clock, 
-  Award, 
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { problemService } from "../services/problemService";
+import {
+  ArrowLeft,
+  Play,
+  Save,
+  Clock,
+  Award,
   CheckCircle,
   XCircle,
   Code2,
-  Send
-} from 'lucide-react';
-import toast from 'react-hot-toast';
+  Send,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import Editor from "@monaco-editor/react";
 
 export default function ProblemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [problem, setProblem] = useState(null);
-  const [code, setCode] = useState('');
-  const [language, setLanguage] = useState('javascript');
+  const [code, setCode] = useState("// Write your code here");
+  const [language, setLanguage] = useState("python"); // default language
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,12 +33,12 @@ export default function ProblemDetail() {
 
   const loadProblem = async () => {
     try {
-      const data = await problemService.getProblemById(id);
+      const data = await problemService.getProblemId(id);
       setProblem(data.problem);
       setCode(getStarterCode(language));
     } catch (error) {
-      toast.error('Failed to load problem');
-      navigate('/problems');
+      toast.error("Failed to load problem");
+      navigate("/problems");
     } finally {
       setLoading(false);
     }
@@ -48,7 +49,7 @@ export default function ProblemDetail() {
       const data = await problemService.getSubmissions(id);
       setSubmissions(data.submissions || []);
     } catch (error) {
-      console.error('Failed to load submissions:', error);
+      console.error("Failed to load submissions:", error);
     }
   };
 
@@ -74,7 +75,7 @@ using namespace std;
 string solution(string input) {
     // Your code here
     return result;
-}`
+}`,
     };
     return starters[lang] || starters.javascript;
   };
@@ -86,24 +87,22 @@ string solution(string input) {
 
   const handleSubmit = async () => {
     if (!code.trim()) {
-      toast.error('Please write some code before submitting');
+      toast.error("Please write some code before submitting");
       return;
     }
 
     setIsSubmitting(true);
     try {
       const result = await problemService.submitSolution(id, code, language);
-      toast.success('Solution submitted successfully!');
-      
+      toast.success("Solution submitted successfully!");
 
-      setSubmissions(prev => [result.submission, ...prev]);
-      
-    
-      if (result.submission.status === 'Accepted') {
-        toast.success('🎉 Congratulations! Your solution is correct!');
+      setSubmissions((prev) => [result.submission, ...prev]);
+
+      if (result.submission.status === "Accepted") {
+        toast.success("🎉 Congratulations! Your solution is correct!");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Submission failed');
+      toast.error(error.response?.data?.message || "Submission failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -111,22 +110,22 @@ string solution(string input) {
 
   const getDifficultyColor = (difficulty) => {
     const colors = {
-      'Easy': 'text-green-600 bg-green-50 border-green-200',
-      'Medium': 'text-orange-600 bg-orange-50 border-orange-200',
-      'Hard': 'text-red-600 bg-red-50 border-red-200'
+      Easy: "text-green-600 bg-green-50 border-green-200",
+      Medium: "text-orange-600 bg-orange-50 border-orange-200",
+      Hard: "text-red-600 bg-red-50 border-red-200",
     };
-    return colors[difficulty] || 'text-gray-600 bg-gray-50 border-gray-200';
+    return colors[difficulty] || "text-gray-600 bg-gray-50 border-gray-200";
   };
 
   const getStatusColor = (status) => {
     const colors = {
-      'Accepted': 'text-green-600 bg-green-50',
-      'Wrong Answer': 'text-red-600 bg-red-50',
-      'Time Limit Exceeded': 'text-orange-600 bg-orange-50',
-      'Runtime Error': 'text-purple-600 bg-purple-50',
-      'Pending': 'text-blue-600 bg-blue-50'
+      Accepted: "text-green-600 bg-green-50",
+      "Wrong Answer": "text-red-600 bg-red-50",
+      "Time Limit Exceeded": "text-orange-600 bg-orange-50",
+      "Runtime Error": "text-purple-600 bg-purple-50",
+      Pending: "text-blue-600 bg-blue-50",
     };
-    return colors[status] || 'text-gray-600 bg-gray-50';
+    return colors[status] || "text-gray-600 bg-gray-50";
   };
 
   if (loading) {
@@ -144,11 +143,10 @@ string solution(string input) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Problem not found</h2>
-          <button 
-            onClick={() => navigate('/problems')}
-            className="btn-primary"
-          >
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Problem not found
+          </h2>
+          <button onClick={() => navigate("/problems")} className="btn-primary">
             Back to Problems
           </button>
         </div>
@@ -159,17 +157,17 @@ string solution(string input) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
+        <motion.div
           className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 blur-3xl"
-          animate={{ 
+          animate={{
             x: [0, 50, 0],
             y: [0, -25, 0],
-            scale: [1, 1.1, 1]
+            scale: [1, 1.1, 1],
           }}
-          transition={{ 
+          transition={{
             duration: 12,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
       </div>
@@ -181,7 +179,7 @@ string solution(string input) {
             <div className="flex items-center justify-between py-4">
               <div className="flex items-center space-x-4">
                 <motion.button
-                  onClick={() => navigate('/problems')}
+                  onClick={() => navigate("/problems")}
                   className="btn-ghost"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -190,9 +188,15 @@ string solution(string input) {
                   Back
                 </motion.button>
                 <div>
-                  <h1 className="text-xl font-bold text-white">{problem.title}</h1>
+                  <h1 className="text-xl font-bold text-white">
+                    {problem.title}
+                  </h1>
                   <div className="flex items-center space-x-4 mt-1">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(problem.difficulty)}`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(
+                        problem.difficulty
+                      )}`}
+                    >
                       {problem.difficulty}
                     </span>
                     <span className="text-blue-100 text-sm flex items-center">
@@ -201,7 +205,7 @@ string solution(string input) {
                     </span>
                     <span className="text-blue-100 text-sm flex items-center">
                       <Clock className="w-4 h-4 mr-1" />
-                      {problem.timeLimit || '2s'}
+                      {problem.timeLimit || "2s"}
                     </span>
                   </div>
                 </div>
@@ -212,7 +216,7 @@ string solution(string input) {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <motion.div 
+            <motion.div
               className="space-y-6"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -240,13 +244,17 @@ string solution(string input) {
                       <div key={index} className="bg-gray-50 rounded-lg p-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <h4 className="font-medium text-sm text-gray-600 mb-2">Input:</h4>
+                            <h4 className="font-medium text-sm text-gray-600 mb-2">
+                              Input:
+                            </h4>
                             <pre className="bg-white p-2 rounded border text-sm font-mono">
                               {example.input}
                             </pre>
                           </div>
                           <div>
-                            <h4 className="font-medium text-sm text-gray-600 mb-2">Output:</h4>
+                            <h4 className="font-medium text-sm text-gray-600 mb-2">
+                              Output:
+                            </h4>
                             <pre className="bg-white p-2 rounded border text-sm font-mono">
                               {example.output}
                             </pre>
@@ -254,8 +262,12 @@ string solution(string input) {
                         </div>
                         {example.explanation && (
                           <div className="mt-3">
-                            <h4 className="font-medium text-sm text-gray-600 mb-1">Explanation:</h4>
-                            <p className="text-sm text-gray-700">{example.explanation}</p>
+                            <h4 className="font-medium text-sm text-gray-600 mb-1">
+                              Explanation:
+                            </h4>
+                            <p className="text-sm text-gray-700">
+                              {example.explanation}
+                            </p>
                           </div>
                         )}
                       </div>
@@ -271,31 +283,44 @@ string solution(string input) {
                   {submissions.length > 0 ? (
                     <div className="space-y-2">
                       {submissions.slice(0, 5).map((submission, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                        >
                           <div className="flex items-center space-x-3">
-                            {submission.status === 'Accepted' ? (
+                            {submission.status === "Accepted" ? (
                               <CheckCircle className="w-5 h-5 text-green-600" />
                             ) : (
                               <XCircle className="w-5 h-5 text-red-600" />
                             )}
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(submission.status)}`}>
+                            <span
+                              className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
+                                submission.status
+                              )}`}
+                            >
                               {submission.status}
                             </span>
-                            <span className="text-sm text-gray-600">{submission.language}</span>
+                            <span className="text-sm text-gray-600">
+                              {submission.language}
+                            </span>
                           </div>
                           <span className="text-sm text-gray-500">
-                            {new Date(submission.createdAt).toLocaleTimeString()}
+                            {new Date(
+                              submission.createdAt
+                            ).toLocaleTimeString()}
                           </span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-center py-4">No submissions yet</p>
+                    <p className="text-gray-500 text-center py-4">
+                      No submissions yet
+                    </p>
                   )}
                 </div>
               </div>
             </motion.div>
-            <motion.div 
+            <motion.div
               className="space-y-6"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -318,11 +343,18 @@ string solution(string input) {
                   </div>
                 </div>
                 <div className="card-content">
-                  <textarea
+                  <Editor
+                    height="400px"
+                    defaultLanguage={language}
+                    language={language}
                     value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    className="w-full h-96 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Write your solution here..."
+                    onChange={(value) => setCode(value)}
+                    theme="vs-dark"
+                    options={{
+                      fontSize: 16,
+                      minimap: { enabled: false },
+                      scrollBeyondLastLine: false,
+                    }}
                   />
                 </div>
                 <div className="card-footer justify-end space-x-3">
@@ -370,3 +402,11 @@ string solution(string input) {
     </div>
   );
 }
+
+const token = localStorage.getItem("authToken");
+fetch("http://localhost:5000/api/problems", {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  },
+});

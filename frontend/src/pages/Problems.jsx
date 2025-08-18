@@ -1,26 +1,26 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { problemService } from '../services/problemService';
-import { 
-  Code2, 
-  Filter, 
-  Search, 
-  Clock, 
-  CheckCircle, 
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { problemService } from "../services/problemService";
+import {
+  Code2,
+  Filter,
+  Search,
+  Clock,
+  CheckCircle,
   XCircle,
   TrendingUp,
   Award,
-  Target
-} from 'lucide-react';
-import toast from 'react-hot-toast';
+  Target,
+} from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Problems() {
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,36 +28,35 @@ export default function Problems() {
   }, [selectedDifficulty, selectedCategory]);
 
   const loadProblems = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const data = await problemService.getAllProblems(1, selectedDifficulty, selectedCategory);
+      const data = await problemService.getProblems(); // <-- use getProblems
       setProblems(data.problems || []);
-    } catch (error) {
-      toast.error('Failed to load problems');
-      console.error('Error loading problems:', error);
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      // handle error
     }
+    setLoading(false);
   };
 
-  const filteredProblems = problems.filter(problem =>
-    problem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    problem.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProblems = problems.filter(
+    (problem) =>
+      problem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      problem.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getDifficultyColor = (difficulty) => {
     const colors = {
-      'Easy': 'text-green-600 bg-green-50 border-green-200',
-      'Medium': 'text-orange-600 bg-orange-50 border-orange-200',
-      'Hard': 'text-red-600 bg-red-50 border-red-200'
+      Easy: "text-green-600 bg-green-50 border-green-200",
+      Medium: "text-orange-600 bg-orange-50 border-orange-200",
+      Hard: "text-red-600 bg-red-50 border-red-200",
     };
-    return colors[difficulty] || 'text-gray-600 bg-gray-50 border-gray-200';
+    return colors[difficulty] || "text-gray-600 bg-gray-50 border-gray-200";
   };
 
   const getStatusIcon = (status) => {
-    if (status === 'Solved') {
+    if (status === "Solved") {
       return <CheckCircle className="w-5 h-5 text-green-600" />;
-    } else if (status === 'Attempted') {
+    } else if (status === "Attempted") {
       return <XCircle className="w-5 h-5 text-red-600" />;
     }
     return <Clock className="w-5 h-5 text-gray-400" />;
@@ -77,30 +76,30 @@ export default function Problems() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
+        <motion.div
           className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full opacity-20 blur-3xl"
-          animate={{ 
+          animate={{
             x: [0, 50, 0],
             y: [0, -25, 0],
-            scale: [1, 1.1, 1]
+            scale: [1, 1.1, 1],
           }}
-          transition={{ 
+          transition={{
             duration: 12,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
-        <motion.div 
+        <motion.div
           className="absolute -bottom-40 -left-32 w-96 h-96 bg-gradient-to-br from-pink-400 to-red-600 rounded-full opacity-20 blur-3xl"
-          animate={{ 
+          animate={{
             x: [0, -50, 0],
             y: [0, 25, 0],
-            scale: [1, 1.2, 1]
+            scale: [1, 1.2, 1],
           }}
-          transition={{ 
+          transition={{
             duration: 15,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
       </div>
@@ -110,14 +109,14 @@ export default function Problems() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
-                <motion.h1 
+                <motion.h1
                   className="text-3xl font-bold text-white"
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
                   Problems 💻
                 </motion.h1>
-                <motion.p 
+                <motion.p
                   className="text-blue-100 mt-1"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -127,7 +126,7 @@ export default function Problems() {
                 </motion.p>
               </div>
               <motion.button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate("/dashboard")}
                 className="btn-secondary"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -140,7 +139,7 @@ export default function Problems() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <motion.div 
+          <motion.div
             className="card mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -181,7 +180,9 @@ export default function Problems() {
                     <option value="">All Categories</option>
                     <option value="Array">Array</option>
                     <option value="String">String</option>
-                    <option value="Dynamic Programming">Dynamic Programming</option>
+                    <option value="Dynamic Programming">
+                      Dynamic Programming
+                    </option>
                     <option value="Graph">Graph</option>
                     <option value="Tree">Tree</option>
                   </select>
@@ -216,15 +217,19 @@ export default function Problems() {
                           {problem.title}
                         </h3>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(problem.difficulty)}`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(
+                          problem.difficulty
+                        )}`}
+                      >
                         {problem.difficulty}
                       </span>
                     </div>
-                    
+
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                       {problem.description}
                     </p>
-                    
+
                     <div className="flex items-center justify-between text-sm text-gray-500">
                       <div className="flex items-center space-x-4">
                         <span className="flex items-center">
@@ -233,30 +238,31 @@ export default function Problems() {
                         </span>
                         <span className="flex items-center">
                           <Clock className="w-4 h-4 mr-1" />
-                          {problem.timeLimit || '2s'}
+                          {problem.timeLimit || "2s"}
                         </span>
                       </div>
                       <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs">
-                        {problem.category || 'General'}
+                        {problem.category || "General"}
                       </span>
                     </div>
                   </div>
                 </motion.div>
               ))
             ) : (
-              <motion.div 
+              <motion.div
                 className="col-span-full text-center py-12"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
               >
                 <Code2 className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">No problems found</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  No problems found
+                </h3>
                 <p className="text-blue-100">
                   {searchTerm || selectedDifficulty || selectedCategory
-                    ? 'Try adjusting your filters'
-                    : 'Problems will appear here once they are added'
-                  }
+                    ? "Try adjusting your filters"
+                    : "Problems will appear here once they are added"}
                 </p>
               </motion.div>
             )}
